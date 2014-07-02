@@ -1,3 +1,0 @@
-Django==1.6.5
-requirements==0.1
-wsgiref==0.1.2
