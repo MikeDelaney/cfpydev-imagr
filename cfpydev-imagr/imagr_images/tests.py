@@ -18,4 +18,21 @@ class PhotoTests(TestCase):
         self.assertEqual(photo1.privacy_option, 1)
         # self.assertEqual(photo1.date_uploaded, datetime.datetime.now())
 
+class AlbumTests(TestCase):
+    def test_album_creation(self):
+        img = File(open('/Users/eyuelabebe/Desktop/projects/Network_tools2/root/static/images/java.jpg'))
+        album1 = Album(
+            title="album1",
+            description="test album 1",
+            cover_photo=img,
+            privacy_option = 1,
+            )
+        self.assertEqual(album1.image,img)
+        self.assertEqual(album1.title, "album1")
+        self.assertEqual(album1.description, "test album 1")
+        self.assertEqual(album1.cover_photo, img)
+        self.assertEqual(album1.privacy_option, 1)
+
+
+
 
