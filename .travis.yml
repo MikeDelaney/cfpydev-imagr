@@ -5,3 +5,6 @@ python:
 install: "pip install -r requirements.txt"
 # command to run tests
 script: python manage.py test imagr_images
+branches:
+    only:
+      - models
