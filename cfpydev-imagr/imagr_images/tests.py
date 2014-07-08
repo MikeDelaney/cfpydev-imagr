@@ -42,15 +42,31 @@ class ImagrUser_Relations_Test(TestCase):
         self.assertEqual(usr1.first_name, 'Eyuel')
         self.assertEqual(usr1.last_name, 'Abebe')
 
-    def test_followers(self):
+    def test_followers_following(self):
         usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe')
         usr2 = ImagrUser(first_name='Muazz', last_name='Mira')
 
+        usr1_following = usr1.following()
+        usr2_following = usr2.following()
+
+        self.assertEqual(usr1_following, [])
+        self.assertEqual(usr2_following, [])
+
+        usr1.save()
+        usr2.save()
+
         usr1.follow(usr2)
 
-        r_one_to_two = Q(relationship_from__userone=usr1)
+        self.assertEqual(usr1.following()[0], usr2)
+        self.assertEqual(usr2.followers()[0], usr1)
 
-        self.assertEqual(followers, 1)
+        usr1.unfollow(usr2)
+
+        self.assertEqual(usr1.following(), [])
+        self.assertEqual(usr2.followers(), [])
+
+
+
 
 
 
