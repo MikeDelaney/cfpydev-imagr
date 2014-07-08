@@ -62,7 +62,8 @@ class Album(models.Model):
     description = models.CharField(max_length=127)
     cover_photo = models.ForeignKey(Photo, related_name='cover_photo')
     photos = models.ManyToManyField(Photo, related_name='album_photo')
-    privacy_option = models.IntegerField(choices=(('private', 0), ('shared', 1), ('public', 2)))
+    # changed following line due to drop down for privacy not functioning correctly
+    privacy_option = models.IntegerField((('private', 0), ('shared', 1), ('public', 2)))
 
     class Meta:
 
@@ -83,7 +84,8 @@ class ImagrUser(AbstractUser):
 
     def __unicode__(self):
         if self.first_name and self.last_name:
-            name = self.first_name + self.last_name
+            # added a space for presentation
+            name = self.first_name + ' ' + self.last_name
         else:
             name = self.username
 
