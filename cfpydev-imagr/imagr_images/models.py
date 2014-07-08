@@ -6,6 +6,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 import os
 
+
 FOLLOWING_BITS = {
     'user_one': 1,
     'user_two': 2
@@ -35,7 +36,6 @@ FRIEND_STATUSES = (
 privacy_choices = (('private', 0), ('shared', 1), ('public', 2))
 
 class Photo(models.Model):
-
     image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images/upload_images'
     image = models.ImageField(upload_to=image_upload_folder,
                               height_field='height',
@@ -52,9 +52,17 @@ class Photo(models.Model):
 
     class Meta:
         ordering = ['title', 'description']
-
+        
     def __unicode__(self):
         return self.description
+
+    def user_link(self):
+        return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.user.id, self.user)
+
+    user_link.allow_tags = True
+    user_link.short_description = "User"
+
+
 
     def image_size(self):
 
@@ -72,6 +80,13 @@ class Album(models.Model):
     class Meta:
         abstract = False
         ordering = ['title', 'description']
+
+    def owner_link(self):
+        return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.owner.id, self.owner)
+
+    owner_link.allow_tags = True
+    owner_link.short_description = "User"
+
 
     def __unicode__(self):
         return self.description
@@ -244,6 +259,3 @@ class Relationships(models.Model):
         representation = u'{} {} {}'.format(unicode(self.user_one), relationship_symbol, unicode(self.user_two))
 
         return representation
-
-
-
