@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-
 FOLLOWING_BITS = {
     'user_one': 1,
     'user_two': 2
@@ -38,6 +37,7 @@ class Photo(models.Model):
     image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images'
 
 
+
     image = models.ImageField(upload_to=image_upload_folder)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
     title = models.CharField(max_length=127)
@@ -51,6 +51,16 @@ class Photo(models.Model):
 
         abstract = False
         ordering = ['title', 'description']
+
+
+    def size(self):
+        return self.image.size
+
+    def user_link(self):
+        return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.user.id, self.user)
+
+    user_link.allow_tags = True
+    user_link.short_description = "User"
 
     def __unicode__(self):
         return self.description
@@ -69,6 +79,13 @@ class Album(models.Model):
 
         abstract = False
         ordering = ['title', 'description']
+
+    def owner_link(self):
+        return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.owner.id, self.owner)
+
+    owner_link.allow_tags = True
+    owner_link.short_description = "User"
+
 
     def __unicode__(self):
         return self.description

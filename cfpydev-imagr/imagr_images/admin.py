@@ -5,13 +5,11 @@ from imagr_images.models import Photo, Album, ImagrUser
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user')
-    list_display_links = ('user',)
+    list_display = ('title', 'user_link','size')
 
 
 class AlbumAdmin(admin.ModelAdmin):
-    list_display = ('title', 'owner')
-    list_display_links = ('owner',)
+    list_display = ('title', 'owner_link')
 
 
 class ImagrUserAdmin(admin.ModelAdmin):
