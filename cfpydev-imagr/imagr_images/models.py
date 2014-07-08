@@ -1,11 +1,30 @@
 from django.db import models
-from django.contrib.auth.models import User
-
+from django.contrib.auth.models import User, AbstractUser, UserManager
+from imagr_site import settings
 
 class Photo(models.Model):
 
     privacy_choices=(('private', 0), ('shared', 1), ('public', 2))
     image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images'
+
+    FOLLOWING_BITS = {
+    'user_one': 1,
+    'user_two': 2
+    }
+
+    FOLLOWER_STATUSES = (
+        (0, u'not following'),
+        (1, u'user_one following user_two'),
+        (2, u'user_two following user_one'),
+        (3, u'both following'),
+    )
+
+    FOLLOWER_SYMBOLS = {
+    0: u' X ',
+    1: u' +->',
+    2: u'<-+ ',
+    3: u'<+-+>',
+    }
 
     image = models.ImageField(upload_to=image_upload_folder)
     user = models.ForeignKey(User) # we can also do user = models.ForeignKey("django.contrib.auth.models.User")
@@ -27,7 +46,7 @@ class Photo(models.Model):
 
 class Album(models.Model):
 
-    user = models.ForeignKey(User)
+    owner = models.ForeignKey(User)
     title = models.CharField(max_length=127)
     description = models.CharField(max_length=127)
     cover_photo = models.ForeignKey(Photo)
@@ -42,12 +61,75 @@ class Album(models.Model):
     def __unicode__(self):
         return self.description
 
-class ImagrUser(models.Model):
 
-    # username =
-    # email =
-    date_joined = models.DateTimeField(auto_now_add=True)
-    active = models.BooleanField()
+class ImagrUser(AbstractUser):
+    relations = models.ManyToManyField('ImagrUser', through='Relationships', blank=True)
+
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+        abstract = True
 
     def __unicode__(self):
-        return
+        if self.first_name and self.last_name:
+            name = self.first_name + self.last_name
+        else:
+            name = self.username
+
+        return name
+
+
+    def followers(self):
+        pass
+    def following(self):
+        pass
+    def follow(self):
+        pass
+    def unfollow(self):
+        pass
+    def list_friends(self):
+        pass
+    def request_friendship(self):
+        pass
+    def end_friendship(self):
+        pass
+    def accept_friendship_request(self):
+        pass
+
+    def _relationship_with(self, to_user):
+        relationship = None
+        try:
+            relationship = Relationships.object.get(user_one=self, user_two=to_user)
+        except Relationships.DoesNotExist:
+            try:
+                relationship = Relationships.objects.get(left=to_user, right=self)
+            except Relationships.DoesNotExist:
+                pass
+        return relationship
+
+
+
+
+
+
+
+class Relationships(models.Model):
+
+    user_one = models.ForeignKey('ImagrUser', related_name='relationship_from')
+    user_two = models.ForeignKey('ImagrUser', related_name='relationship_to')
+    follower_status = models.IntegerField(choices = FOLLOWER_STATUSES )
+    friendship = models.NullBooleanField(null=True, blank=True, default=None)
+
+
+    def __unicode__(self):
+
+        relationship_symbol = FOLLOWER_SYMBOLS.get(self.follower_status)
+        if self.friendship:
+            relationship_symbol += u"(F)"
+
+        representation = u'{} {} {}'.format(unicode(self.user_one), relationship_symbol, unicode(self.user_two))
+
+        return representation
+
+
+
