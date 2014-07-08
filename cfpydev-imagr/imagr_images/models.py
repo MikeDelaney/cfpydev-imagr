@@ -37,8 +37,11 @@ privacy_choices = (('private', 0), ('shared', 1), ('public', 2))
 class Photo(models.Model):
 
     image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images/upload_images'
-    image = models.ImageField(upload_to=image_upload_folder)
-    image_size = image.size
+    image = models.ImageField(upload_to=image_upload_folder,
+                              height_field='height',
+                              width_field='width')
+    height = models.PositiveIntegerField(default=0, editable=False)
+    width = models.PositiveIntegerField(default=0, editable=False)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
     title = models.CharField(max_length=127)
     description = models.CharField(max_length=127)
@@ -53,10 +56,9 @@ class Photo(models.Model):
     def __unicode__(self):
         return self.description
 
-    def get_image_size(self, image):
-        with open(image.name, 'rb') as fb:
-            size = fb.__sizeof__()
-        return size
+    def image_size(self):
+
+        return self.image.size
 
 class Album(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Album_owner')

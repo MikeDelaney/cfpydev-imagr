@@ -4,11 +4,11 @@ from imagr_images.models import Photo, Album, ImagrUser
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'owner')
-    list_display_links = ('user',)
+    list_display = ('title', 'owner', 'image_size', 'height', 'width')
+    list_display_links = ('owner',)
     readonly_fields = ('date_uploaded',
-                               'date_modified',
-                               'date_published')
+                       'date_modified',
+                       'date_published')
 
 class AlbumAdmin(admin.ModelAdmin):
     list_display = ('title', 'owner')
