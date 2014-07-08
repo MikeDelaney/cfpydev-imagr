@@ -1,6 +1,7 @@
 from django.db import models, Q
 from django.contrib.auth.models import User, AbstractUser, UserManager
 from imagr_site import settings
+from django.db.models import Q
 
 
 FOLLOWING_BITS = {
@@ -21,6 +22,14 @@ FOLLOWER_SYMBOLS = {
     2: u'<-+ ',
     3: u'<+-+>',
 }
+
+FRIEND_STATUSES = (
+    (0, u'not friends'),
+    (1, u'user_one requesting user_two'),
+    (2, u'user_two requesting user_one'),
+    (3, u'friends'),
+)
+
 class Photo(models.Model):
 
     privacy_choices=(('private', 0), ('shared', 1), ('public', 2))
@@ -94,6 +103,39 @@ class ImagrUser(AbstractUser):
 
         return followers
 
+    def list_friends(self):
+        friends = filter(
+            (Q(relationship_from__user_one=self) &
+             Q(relationship_from__friendship__exact=True)) |
+            (Q(relationship_to__user_two=self) &
+             Q(relationship_to__friendship__exact=True))
+        )
+        return friends
+
+    def request_friendship(self, other):
+        if other not in self.list_friends():
+            rel = self._relationship_with(other)
+            if rel is not None:
+                for slot in ['user_one', 'user_two']:
+                    if getattr(rel, slot) == self:
+                        if rel.friendship not in (1, 2):
+                            bitmask = FOLLOWING_BITS[slot]
+                            rel.friendship = rel.friendship | bitmask
+                            break
+        rel.full_clean()
+        rel.save()
+
+    def accept_friendship_request(self, other):
+        if other not in self.list_friends():
+            rel = self._relationship_with(other)
+            if rel is not None:
+                rel.friendship = 3
+            else:
+                rel = Relationships(user_one=self,
+                                    user_two=other,
+                                    follower_status=0,
+                                    friendship=3)
+
     def following(self):
         """Returns a sql query object for list of users self is following"""
         following_user_one = (
@@ -131,7 +173,6 @@ class ImagrUser(AbstractUser):
                 relationship.full_clean()
                 relationship.save()
 
-
     def unfollow(self, to_user):
         my_relation = self._relationship_with(to_user)
         if not my_relation or (to_user not in self.following()):
@@ -143,10 +184,6 @@ class ImagrUser(AbstractUser):
                 my_relation.save()
                 return
 
-    def list_friends(self):
-        pass
-    def request_friendship(self):
-        pass
     def end_friendship(self, to_user):
         my_relation = self._relationship_with(to_user)
         if not my_relation or my_relation.friendship != 3:
@@ -166,11 +203,8 @@ class ImagrUser(AbstractUser):
                 return
 
 
-
-    def accept_friendship_request(self):
-        pass
-
     def _relationship_with(self, a_user):
+        """Returns a relationship object(row from Relationships table) or none if there is no existing relationship."""
         relationship = None
         try:
             relationship = Relationships.object.get(user_one=self, user_two=a_user)
@@ -183,16 +217,12 @@ class ImagrUser(AbstractUser):
 
 
 
-
-
-
-
 class Relationships(models.Model):
 
     user_one = models.ForeignKey('ImagrUser', related_name='relationship_from')
     user_two = models.ForeignKey('ImagrUser', related_name='relationship_to')
     follower_status = models.IntegerField(choices=FOLLOWER_STATUSES)
-    friendship = models.NullBooleanField(null=True, blank=True, default=None)
+    friendship = models.IntegerField(choices=FRIEND_STATUSES)
 
 
     def __unicode__(self):
