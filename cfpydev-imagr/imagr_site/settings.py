@@ -26,7 +26,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'ImagrUser'
+AUTH_USER_MODEL = 'imagr_images.ImagrUser'
 
 # Application definition
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'imagr_images',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -1,7 +1,9 @@
-from django.db import models, Q
-from django.contrib.auth.models import User, AbstractUser, UserManager
+from django.db import models
+from django.contrib.auth.models import AbstractUser
 from imagr_site import settings
 from django.db.models import Q
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 
 FOLLOWING_BITS = {
@@ -37,7 +39,7 @@ class Photo(models.Model):
 
 
     image = models.ImageField(upload_to=image_upload_folder)
-    user = models.ForeignKey(User) # we can also do user = models.ForeignKey("django.contrib.auth.models.User")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
     title = models.CharField(max_length=127)
     description = models.CharField(max_length=127)
     date_uploaded = models.DateTimeField(auto_now_add=True, blank=False)
@@ -55,11 +57,11 @@ class Photo(models.Model):
 
 
 class Album(models.Model):
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Album_owner')
     title = models.CharField(max_length=127)
     description = models.CharField(max_length=127)
-    cover_photo = models.ForeignKey(Photo)
-    photos = models.ManyToManyField(Photo)
+    cover_photo = models.ForeignKey(Photo, related_name='cover_photo')
+    photos = models.ManyToManyField(Photo, related_name='album_photo')
     privacy_option = models.IntegerField(choices=(('private', 0), ('shared', 1), ('public', 2)))
 
     class Meta:
@@ -77,7 +79,7 @@ class ImagrUser(AbstractUser):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
-        abstract = True
+        # abstract = True
 
     def __unicode__(self):
         if self.first_name and self.last_name:
