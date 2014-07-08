@@ -1,6 +1,7 @@
-from django.db import models
+from django.db import models, Q
 from django.contrib.auth.models import User, AbstractUser, UserManager
 from imagr_site import settings
+
 
 class Photo(models.Model):
 
@@ -80,11 +81,62 @@ class ImagrUser(AbstractUser):
 
 
     def followers(self):
-        pass
+        """Returns a sql query object for list of self's followers"""
+        user_one_followers = (
+            Q(relationship_from__user_two=self) & \
+            Q(relationship_from__follower_status__in=[1, 3]))
+
+        user_two_followers = (
+            Q(relationship_to__user_one=self) & \
+            Q(relationship_to__follower_status__in=[2, 3]))
+
+        followers = ImagrUser.objects.filter(
+            Q( user_one_followers | user_two_followers )
+        )
+
+        return followers
+
+
     def following(self):
-        pass
-    def follow(self):
-        pass
+        """Returns a sql query object for list of users self is following"""
+        following_user_one = (
+            Q(relationship_to__user_one=self) &
+            Q(relationship_to__follower_status__in=[1, 3])
+        )
+
+        following_user_two = (
+            Q(relationship_from__user_two=self) &
+            Q(relationship_from__follower_status__in=[2, 3])
+        )
+
+        followers = ImagrUser.objects.filter(
+            Q( following_user_one | following_user_two )
+        )
+
+        return followers
+
+
+    def follow(self, a_user):
+        """
+        self follow other users.
+        If a relationship does not exist between self and user, one is created.
+        Relationship is validated before save. Calling code handles errors.
+        """
+        if a_user not in self.following():
+            relationship = self._relationship_with(self, a_user)
+            if relationship is not None:
+                for slot in ['user_one', 'user_two']:
+                    if getattr(relationship, slot) == self:
+                        bitmask = FOLLOWING_BITS[slot]
+                        relationship.follower_status = relationship.follower_status | bitmask
+                        break
+            else:
+                relationship = Relationships(user_one=self, user_two=a_user,follower_status=1)
+                relationship.full_clean()
+                relationship.save()
+
+
+
     def unfollow(self):
         pass
     def list_friends(self):
@@ -96,13 +148,13 @@ class ImagrUser(AbstractUser):
     def accept_friendship_request(self):
         pass
 
-    def _relationship_with(self, to_user):
+    def _relationship_with(self, a_user):
         relationship = None
         try:
-            relationship = Relationships.object.get(user_one=self, user_two=to_user)
+            relationship = Relationships.object.get(user_one=self, user_two=a_user)
         except Relationships.DoesNotExist:
             try:
-                relationship = Relationships.objects.get(left=to_user, right=self)
+                relationship = Relationships.objects.get(left=a_user, right=self)
             except Relationships.DoesNotExist:
                 pass
         return relationship
