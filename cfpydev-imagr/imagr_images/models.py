@@ -85,14 +85,41 @@ class ImagrUser(AbstractUser):
         pass
     def follow(self):
         pass
-    def unfollow(self):
-        pass
+    def unfollow(self, to_user):
+        my_relation = _relationship_with(to_user)
+        if not my_relation or (to_user not in self.following()):
+            return
+        for slot in ['user_one', 'user_two']:
+            if getattr(my_relation, slot) != self:
+                mask = FOLLOWING_BITS[slot]
+                my_relation.follower_status &= mask
+                my_relation.save()
+                return
+
     def list_friends(self):
         pass
     def request_friendship(self):
         pass
-    def end_friendship(self):
-        pass
+    def end_friendship(self, to_user):
+        my_relation = _relationship_with(to_user)
+        if not my_relation or my_relation.friendship != 3:
+            return
+        my_relation.friendship = 3
+        my_relation.save()
+
+    def cancel_friendship_request(self, to_user):
+        my_relation = _relationship_with(to_user)
+        if not my_relation or my_relation == 0 or my_relation == 3:
+            return
+        for slot in ['user_one', 'user_two']:
+            if getattr(my_relation, slot) != self:
+                mask = FOLLOWING_BITS[slot]
+                my_relation.friendship &= mask
+                my_relation.save()
+                return
+
+
+
     def accept_friendship_request(self):
         pass
 
