@@ -4,6 +4,8 @@ from imagr_site import settings
 from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+import os
+
 
 FOLLOWING_BITS = {
     'user_one': 1,
@@ -31,15 +33,13 @@ FRIEND_STATUSES = (
     (3, u'friends'),
 )
 
+privacy_choices = (('private', 0), ('shared', 1), ('public', 2))
+
 class Photo(models.Model):
-
-    privacy_choices=(('private', 0), ('shared', 1), ('public', 2))
-    image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images'
-
-
-
+    image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images/upload_images'
     image = models.ImageField(upload_to=image_upload_folder)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
+    image_size = image.size
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
     title = models.CharField(max_length=127)
     description = models.CharField(max_length=127)
     date_uploaded = models.DateTimeField(auto_now_add=True, blank=False)
@@ -48,13 +48,7 @@ class Photo(models.Model):
     privacy_option = models.IntegerField(privacy_choices)
 
     class Meta:
-
-        abstract = False
         ordering = ['title', 'description']
-
-
-    def size(self):
-        return self.image.size
 
     def user_link(self):
         return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.user.id, self.user)
@@ -65,6 +59,10 @@ class Photo(models.Model):
     def __unicode__(self):
         return self.description
 
+    def get_image_size(self, image):
+        with open(image.name, 'rb') as fb:
+            size = fb.__sizeof__()
+        return size
 
 class Album(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Album_owner')
@@ -72,11 +70,10 @@ class Album(models.Model):
     description = models.CharField(max_length=127)
     cover_photo = models.ForeignKey(Photo, related_name='cover_photo')
     photos = models.ManyToManyField(Photo, related_name='album_photo')
-    # changed following line due to drop down for privacy not functioning correctly
-    privacy_option = models.IntegerField((('private', 0), ('shared', 1), ('public', 2)))
+    privacy_option = models.IntegerField(privacy_choices)
+
 
     class Meta:
-
         abstract = False
         ordering = ['title', 'description']
 
@@ -97,11 +94,9 @@ class ImagrUser(AbstractUser):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
-        # abstract = True
 
     def __unicode__(self):
         if self.first_name and self.last_name:
-            # added a space for presentation
             name = self.first_name + ' ' + self.last_name
         else:
             name = self.username
@@ -125,35 +120,36 @@ class ImagrUser(AbstractUser):
         return followers
 
     def list_friends(self):
+        import pdb;pdb.set_trace()
         friends = filter(
             (Q(relationship_from__user_one=self) &
-             Q(relationship_from__friendship__exact=True)) |
+             Q(relationship_from__friendship__exact=True)) ,
             (Q(relationship_to__user_two=self) &
              Q(relationship_to__friendship__exact=True))
         )
         return friends
 
-    def request_friendship(self, other):
-        if other not in self.list_friends():
-            rel = self._relationship_with(other)
-            if rel is not None:
+    def request_friendship(self, a_user):
+        if a_user not in self.list_friends():
+            relationship = self._relationship_with(a_user)
+            if relationship is not None:
                 for slot in ['user_one', 'user_two']:
-                    if getattr(rel, slot) == self:
-                        if rel.friendship not in (1, 2):
+                    if getattr(relationship, slot) == self:
+                        if relationship.friendship not in (1, 2):
                             bitmask = FOLLOWING_BITS[slot]
-                            rel.friendship = rel.friendship | bitmask
+                            relationship.friendship = relationship.friendship | bitmask
                             break
-        rel.full_clean()
-        rel.save()
+        relationship.full_clean()
+        relationship.save()
 
-    def accept_friendship_request(self, other):
-        if other not in self.list_friends():
-            rel = self._relationship_with(other)
-            if rel is not None:
-                rel.friendship = 3
+    def accept_friendship_request(self, a_user):
+        if a_user not in self.list_friends():
+            relationship = self._relationship_with(a_user)
+            if relationship is not None:
+                relationship.friendship = 3
             else:
-                rel = Relationships(user_one=self,
-                                    user_two=other,
+                relationship = Relationships(user_one=self,
+                                    user_two=a_user,
                                     follower_status=0,
                                     friendship=3)
 
@@ -182,7 +178,7 @@ class ImagrUser(AbstractUser):
         Relationship is validated before save. Calling code handles errors.
         """
         if a_user not in self.following():
-            relationship = self._relationship_with(self, a_user)
+            relationship = self._relationship_with(a_user)
             if relationship is not None:
                 for slot in ['user_one', 'user_two']:
                     if getattr(relationship, slot) == self:
@@ -190,7 +186,11 @@ class ImagrUser(AbstractUser):
                         relationship.follower_status = relationship.follower_status | bitmask
                         break
             else:
-                relationship = Relationships(user_one=self, user_two=a_user, follower_status=1)
+
+                relationship = Relationships(user_one=self,
+                                             user_two=a_user,
+                                             follower_status=1,
+                                             friendship=0)
                 relationship.full_clean()
                 relationship.save()
 
@@ -228,10 +228,10 @@ class ImagrUser(AbstractUser):
         """Returns a relationship object(row from Relationships table) or none if there is no existing relationship."""
         relationship = None
         try:
-            relationship = Relationships.object.get(user_one=self, user_two=a_user)
+            relationship = Relationships.objects.get(user_one=self, user_two=a_user)
         except Relationships.DoesNotExist:
             try:
-                relationship = Relationships.objects.get(left=a_user, right=self)
+                relationship = Relationships.objects.get(user_one=a_user, user_two=self)
             except Relationships.DoesNotExist:
                 pass
         return relationship
@@ -255,6 +255,3 @@ class Relationships(models.Model):
         representation = u'{} {} {}'.format(unicode(self.user_one), relationship_symbol, unicode(self.user_two))
 
         return representation
-
-
-

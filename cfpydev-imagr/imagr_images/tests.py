@@ -2,6 +2,7 @@ from django.test import TestCase
 from imagr_images.models import Photo, Album, ImagrUser, Relationships
 from django.core.files import File
 import datetime
+from django.db.models import Q
 
 # Create your tests here.
 
@@ -34,8 +35,38 @@ class AlbumTests(TestCase):
         self.assertEqual(album1.privacy_option, 1)
 
 
-class ImagrUser(TestCase):
+class ImagrUser_Relations_Test(TestCase):
     def test_user_creation(self):
         usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe')
+
+        self.assertEqual(usr1.first_name, 'Eyuel')
+        self.assertEqual(usr1.last_name, 'Abebe')
+
+    def test_followers_following(self):
+        usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe')
+        usr2 = ImagrUser(first_name='Muazz', last_name='Mira')
+
+        usr1_following = usr1.following()
+        usr2_following = usr2.following()
+
+        self.assertEqual(usr1_following, [])
+        self.assertEqual(usr2_following, [])
+
+        usr1.save()
+        usr2.save()
+
+        usr1.follow(usr2)
+
+        self.assertEqual(usr1.following()[0], usr2)
+        self.assertEqual(usr2.followers()[0], usr1)
+
+        usr1.unfollow(usr2)
+
+        self.assertEqual(usr1.following(), [])
+        self.assertEqual(usr2.followers(), [])
+
+
+
+
 
 

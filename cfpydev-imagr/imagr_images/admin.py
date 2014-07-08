@@ -1,15 +1,16 @@
 from django.contrib import admin
 from imagr_images.models import Photo, Album, ImagrUser
 
-# Register your models here.
-
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user_link','size')
+    list_display = ('title', 'user_link')
 
 
 class AlbumAdmin(admin.ModelAdmin):
     list_display = ('title', 'owner_link')
+    readonly_fields = ('date_uploaded',
+                       'date_modified',
+                       'date_published')
 
 
 class ImagrUserAdmin(admin.ModelAdmin):
