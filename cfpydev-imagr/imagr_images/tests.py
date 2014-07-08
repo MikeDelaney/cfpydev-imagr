@@ -1,5 +1,5 @@
 from django.test import TestCase
-from imagr_images.models import Photo, Album
+from imagr_images.models import Photo, Album, ImagrUser, Relationships
 from django.core.files import File
 import datetime
 
@@ -25,7 +25,7 @@ class AlbumTests(TestCase):
             title="album1",
             description="test album 1",
             cover_photo=img,
-            privacy_option = 1,
+            privacy_option=1,
             )
         self.assertEqual(album1.image,img)
         self.assertEqual(album1.title, "album1")
@@ -34,5 +34,8 @@ class AlbumTests(TestCase):
         self.assertEqual(album1.privacy_option, 1)
 
 
+class ImagrUser(TestCase):
+    def test_user_creation(self):
+        usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe')
 
 

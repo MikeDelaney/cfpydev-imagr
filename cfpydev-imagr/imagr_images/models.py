@@ -21,10 +21,10 @@ class Photo(models.Model):
     )
 
     FOLLOWER_SYMBOLS = {
-    0: u' X ',
-    1: u' +->',
-    2: u'<-+ ',
-    3: u'<+-+>',
+        0: u' X ',
+        1: u' +->',
+        2: u'<-+ ',
+        3: u'<+-+>',
     }
 
     image = models.ImageField(upload_to=image_upload_folder)
@@ -46,7 +46,6 @@ class Photo(models.Model):
 
 
 class Album(models.Model):
-
     owner = models.ForeignKey(User)
     title = models.CharField(max_length=127)
     description = models.CharField(max_length=127)
@@ -79,7 +78,6 @@ class ImagrUser(AbstractUser):
 
         return name
 
-
     def followers(self):
         """Returns a sql query object for list of self's followers"""
         user_one_followers = (
@@ -95,7 +93,6 @@ class ImagrUser(AbstractUser):
         )
 
         return followers
-
 
     def following(self):
         """Returns a sql query object for list of users self is following"""
@@ -131,7 +128,7 @@ class ImagrUser(AbstractUser):
                         relationship.follower_status = relationship.follower_status | bitmask
                         break
             else:
-                relationship = Relationships(user_one=self, user_two=a_user,follower_status=1)
+                relationship = Relationships(user_one=self, user_two=a_user, follower_status=1)
                 relationship.full_clean()
                 relationship.save()
 
