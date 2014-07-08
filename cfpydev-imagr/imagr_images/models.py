@@ -37,10 +37,7 @@ privacy_choices = (('private', 0), ('shared', 1), ('public', 2))
 
 class Photo(models.Model):
 
-
     image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images/upload_images'
-
-
     image = models.ImageField(upload_to=image_upload_folder)
     # image_size = os.path.getsize(image)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
@@ -68,6 +65,7 @@ class Album(models.Model):
     photos = models.ManyToManyField(Photo, related_name='album_photo')
     privacy_option = models.IntegerField(privacy_choices)
 
+
     class Meta:
 
         abstract = False
@@ -87,7 +85,8 @@ class ImagrUser(AbstractUser):
 
     def __unicode__(self):
         if self.first_name and self.last_name:
-            name = self.first_name + self.last_name
+            # added a space for presentation
+            name = self.first_name + ' ' + self.last_name
         else:
             name = self.username
 
