@@ -38,8 +38,8 @@ class Photo(models.Model):
 
     image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images/upload_images'
     image = models.ImageField(upload_to=image_upload_folder)
-    # image_size = os.path.getsize(image)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
+    image_size = image.size
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
     title = models.CharField(max_length=127)
     description = models.CharField(max_length=127)
     date_uploaded = models.DateTimeField(auto_now_add=True, blank=False)
@@ -53,6 +53,10 @@ class Photo(models.Model):
     def __unicode__(self):
         return self.description
 
+    def get_image_size(self, image):
+        with open(image.name, 'rb') as fb:
+            size = fb.__sizeof__()
+        return size
 
 class Album(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Album_owner')

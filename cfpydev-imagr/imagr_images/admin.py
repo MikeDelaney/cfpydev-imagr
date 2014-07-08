@@ -4,7 +4,7 @@ from imagr_images.models import Photo, Album, ImagrUser
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user')
+    list_display = ('title', 'owner')
     list_display_links = ('user',)
     readonly_fields = ('date_uploaded',
                                'date_modified',
