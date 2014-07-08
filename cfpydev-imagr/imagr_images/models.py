@@ -4,7 +4,8 @@ from imagr_site import settings
 from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-
+from django.core.files.images import get_image_dimensions
+import os
 
 FOLLOWING_BITS = {
     'user_one': 1,
@@ -32,13 +33,16 @@ FRIEND_STATUSES = (
     (3, u'friends'),
 )
 
+privacy_choices = (('private', 0), ('shared', 1), ('public', 2))
+
 class Photo(models.Model):
 
-    privacy_choices=(('private', 0), ('shared', 1), ('public', 2))
-    image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images'
+
+    image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images/upload_images'
 
 
     image = models.ImageField(upload_to=image_upload_folder)
+    # image_size = os.path.getsize(image)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
     title = models.CharField(max_length=127)
     description = models.CharField(max_length=127)
@@ -49,7 +53,7 @@ class Photo(models.Model):
 
     class Meta:
 
-        abstract = False
+        # abstract = False
         ordering = ['title', 'description']
 
     def __unicode__(self):
@@ -62,7 +66,7 @@ class Album(models.Model):
     description = models.CharField(max_length=127)
     cover_photo = models.ForeignKey(Photo, related_name='cover_photo')
     photos = models.ManyToManyField(Photo, related_name='album_photo')
-    privacy_option = models.IntegerField(choices=(('private', 0), ('shared', 1), ('public', 2)))
+    privacy_option = models.IntegerField(privacy_choices)
 
     class Meta:
 
