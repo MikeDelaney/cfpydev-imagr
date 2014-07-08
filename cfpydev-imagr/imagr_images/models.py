@@ -3,29 +3,29 @@ from django.contrib.auth.models import User, AbstractUser, UserManager
 from imagr_site import settings
 
 
+FOLLOWING_BITS = {
+    'user_one': 1,
+    'user_two': 2
+}
+
+FOLLOWER_STATUSES = (
+    (0, u'not following'),
+    (1, u'user_one following user_two'),
+    (2, u'user_two following user_one'),
+    (3, u'both following'),
+)
+
+FOLLOWER_SYMBOLS = {
+    0: u' X ',
+    1: u' +->',
+    2: u'<-+ ',
+    3: u'<+-+>',
+}
 class Photo(models.Model):
 
     privacy_choices=(('private', 0), ('shared', 1), ('public', 2))
     image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images'
 
-    FOLLOWING_BITS = {
-    'user_one': 1,
-    'user_two': 2
-    }
-
-    FOLLOWER_STATUSES = (
-        (0, u'not following'),
-        (1, u'user_one following user_two'),
-        (2, u'user_two following user_one'),
-        (3, u'both following'),
-    )
-
-    FOLLOWER_SYMBOLS = {
-        0: u' X ',
-        1: u' +->',
-        2: u'<-+ ',
-        3: u'<+-+>',
-    }
 
     image = models.ImageField(upload_to=image_upload_folder)
     user = models.ForeignKey(User) # we can also do user = models.ForeignKey("django.contrib.auth.models.User")
@@ -89,7 +89,7 @@ class ImagrUser(AbstractUser):
             Q(relationship_to__follower_status__in=[2, 3]))
 
         followers = ImagrUser.objects.filter(
-            Q( user_one_followers | user_two_followers )
+            Q(user_one_followers | user_two_followers)
         )
 
         return followers
@@ -107,7 +107,7 @@ class ImagrUser(AbstractUser):
         )
 
         followers = ImagrUser.objects.filter(
-            Q( following_user_one | following_user_two )
+            Q(following_user_one | following_user_two)
         )
 
         return followers
@@ -133,7 +133,7 @@ class ImagrUser(AbstractUser):
 
 
     def unfollow(self, to_user):
-        my_relation = _relationship_with(to_user)
+        my_relation = self._relationship_with(to_user)
         if not my_relation or (to_user not in self.following()):
             return
         for slot in ['user_one', 'user_two']:
@@ -148,14 +148,14 @@ class ImagrUser(AbstractUser):
     def request_friendship(self):
         pass
     def end_friendship(self, to_user):
-        my_relation = _relationship_with(to_user)
+        my_relation = self._relationship_with(to_user)
         if not my_relation or my_relation.friendship != 3:
             return
         my_relation.friendship = 3
         my_relation.save()
 
     def cancel_friendship_request(self, to_user):
-        my_relation = _relationship_with(to_user)
+        my_relation = self._relationship_with(to_user)
         if not my_relation or my_relation == 0 or my_relation == 3:
             return
         for slot in ['user_one', 'user_two']:
@@ -191,7 +191,7 @@ class Relationships(models.Model):
 
     user_one = models.ForeignKey('ImagrUser', related_name='relationship_from')
     user_two = models.ForeignKey('ImagrUser', related_name='relationship_to')
-    follower_status = models.IntegerField(choices = FOLLOWER_STATUSES )
+    follower_status = models.IntegerField(choices=FOLLOWER_STATUSES)
     friendship = models.NullBooleanField(null=True, blank=True, default=None)
 
 
