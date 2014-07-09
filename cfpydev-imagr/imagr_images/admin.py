@@ -1,4 +1,3 @@
-import datetime
 from django.contrib import admin
 from imagr_images.models import Photo, Album, ImagrUser
 
@@ -7,16 +6,14 @@ from imagr_images.models import Photo, Album, ImagrUser
 class PhotoAdmin(admin.ModelAdmin):
 
     list_display = ('title',
-                    'user_link',
-                    'owner',
-                    'image_size',
+                    'owner_link',
+                    'size',
                     'height',
                     'width')
 
-    search_fields = ['username', 'first_name', 'last_name', 'email']
-    list_display_links = ('owner',)
+    search_fields = ['title', 'size']
     readonly_fields = ('date_uploaded', 'date_modified', 'date_published',)
-    date_hirerachy = 'date_published'
+    date_hierarchy = 'date_published'
 
 class AlbumAdmin(admin.ModelAdmin):
     search_fields = ['username', 'first_name', 'last_name', 'email']
