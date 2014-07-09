@@ -3,7 +3,12 @@ from imagr_images.models import Photo, Album, ImagrUser
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user_link', 'owner', 'image_size', 'height', 'width')
+    list_display = ('title',
+                    'user_link',
+                    'owner',
+                    'image_size',
+                    'height',
+                    'width')
     list_display_links = ('owner',)
     readonly_fields = ('date_uploaded',
                        'date_modified',
@@ -16,6 +21,7 @@ class AlbumAdmin(admin.ModelAdmin):
                        'date_published')
 
 class ImagrUserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'first_name', 'last_name', 'email')
     search_fields = ['username', 'first_name', 'last_name', 'email']
 
 admin.site.register(Photo, PhotoAdmin)

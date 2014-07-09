@@ -52,20 +52,17 @@ class Photo(models.Model):
 
     class Meta:
         ordering = ['title', 'description']
-        
+
     def __unicode__(self):
         return self.description
 
     def user_link(self):
-        return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.user.id, self.user)
+        return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.owner.id, self.owner)
 
     user_link.allow_tags = True
     user_link.short_description = "User"
 
-
-
     def image_size(self):
-
         return self.image.size
 
 class Album(models.Model):
@@ -74,8 +71,10 @@ class Album(models.Model):
     description = models.CharField(max_length=127)
     cover_photo = models.ForeignKey(Photo, related_name='cover_photo')
     photos = models.ManyToManyField(Photo, related_name='album_photo')
+    date_uploaded = models.DateTimeField(auto_now_add=True, blank=False)
+    date_modified = models.DateTimeField(auto_now=True, blank=False)
+    date_published = models.DateTimeField(auto_now=True)
     privacy_option = models.IntegerField(privacy_choices)
-
 
     class Meta:
         abstract = False
@@ -124,10 +123,9 @@ class ImagrUser(AbstractUser):
         return followers
 
     def list_friends(self):
-        import pdb;pdb.set_trace()
-        friends = filter(
+        friends = ImagrUser.objects.filter(
             (Q(relationship_from__user_one=self) &
-             Q(relationship_from__friendship__exact=True)) ,
+             Q(relationship_from__friendship__exact=True)) |
             (Q(relationship_to__user_two=self) &
              Q(relationship_to__friendship__exact=True))
         )
@@ -136,6 +134,13 @@ class ImagrUser(AbstractUser):
     def request_friendship(self, a_user):
         if a_user not in self.list_friends():
             relationship = self._relationship_with(a_user)
+
+            if relationship is None:
+                Relationships(user_one=self,
+                              user_two=a_user,
+                              follower_status=0,
+                              friendship=1)
+                return
             if relationship is not None:
                 for slot in ['user_one', 'user_two']:
                     if getattr(relationship, slot) == self:
@@ -149,6 +154,9 @@ class ImagrUser(AbstractUser):
     def accept_friendship_request(self, a_user):
         if a_user not in self.list_friends():
             relationship = self._relationship_with(a_user)
+
+            if relationship is None:
+                return
             if relationship is not None:
                 relationship.friendship = 3
             else:
@@ -156,6 +164,9 @@ class ImagrUser(AbstractUser):
                                     user_two=a_user,
                                     follower_status=0,
                                     friendship=3)
+
+            relationship.full_clean()
+            relationship.save()
 
     def following(self):
         """Returns a sql query object for list of users self is following"""
@@ -256,6 +267,8 @@ class Relationships(models.Model):
         if self.friendship:
             relationship_symbol += u"(F)"
 
-        representation = u'{} {} {}'.format(unicode(self.user_one), relationship_symbol, unicode(self.user_two))
+        representation = u'{} {} {}'.format(unicode(self.user_one),
+                                            relationship_symbol,
+                                            unicode(self.user_two))
 
         return representation
