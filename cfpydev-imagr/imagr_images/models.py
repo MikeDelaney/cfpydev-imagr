@@ -50,6 +50,7 @@ class Photo(models.Model):
     date_published = models.DateTimeField(auto_now=True)
     privacy_option = models.IntegerField(choices=privacy_choices)
     size = models.PositiveIntegerField(default=0, editable=False)
+    size_range = models.CharField(max_length=27, editable=False, blank=False)
 
 
     class Meta:
@@ -67,6 +68,16 @@ class Photo(models.Model):
 
     def save(self, *args, **kwargs):
         self.size = self.image.size
+
+        if self.size < 1000001:
+            self.size_range = '<= 1MB'
+        elif self.size < 10000001:
+            self.size_range = '<= 10MB'
+        elif self.size < 100000001:
+            self.size_range = '<= 100MB'
+        else:
+            self.size_range = '> 100MB'
+
         super(Photo, self).save(*args, **kwargs)
 
 class Album(models.Model):
@@ -75,9 +86,9 @@ class Album(models.Model):
     description = models.CharField(max_length=127)
     cover_photo = models.ForeignKey(Photo, related_name='cover_photo')
     photos = models.ManyToManyField(Photo, related_name='album_photo')
-    date_uploaded = models.DateTimeField(auto_now_add=True, blank=False)
-    date_modified = models.DateTimeField(auto_now=True, blank=False)
-    date_published = models.DateTimeField(auto_now=True)
+    date_uploaded = models.DateTimeField(auto_now_add=True, blank=True)
+    date_modified = models.DateTimeField(auto_now=True, blank=True)
+    date_published = models.DateTimeField(auto_now=True, blank=True)
     privacy_option = models.IntegerField(choices=privacy_choices)
 
     class Meta:

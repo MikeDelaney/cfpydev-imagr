@@ -14,7 +14,7 @@ class PhotoAdmin(admin.ModelAdmin):
     search_fields = ['owner__username', 'owner__first_name', 'owner__last_name', 'owner__email']
 
     readonly_fields = ('date_uploaded', 'date_modified', 'date_published',)
-    date_hierarchy = 'date_published'
+    list_filter = ('date_published', 'size_range')
 
 class AlbumAdmin(admin.ModelAdmin):
     search_fields = ['owner__username', 'owner__first_name', 'owner__last_name', 'owner__email']
