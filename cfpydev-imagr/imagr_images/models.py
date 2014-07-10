@@ -33,10 +33,10 @@ FRIEND_STATUSES = (
     (3, u'friends'),
 )
 
-privacy_choices = (('private', 0), ('shared', 1), ('public', 2))
+privacy_choices = ((0, 'Private'), (1, 'Shared'), (2, 'Public'))
 
 class Photo(models.Model):
-    image_upload_folder = '/Users/eyuelabebe/Desktop/projects/django-imagr/cfpydev-imagr/imagr_images/upload_images'
+    image_upload_folder = 'photos/%Y/%m/%d'
     image = models.ImageField(upload_to=image_upload_folder,
                               height_field='height',
                               width_field='width')
@@ -48,7 +48,9 @@ class Photo(models.Model):
     date_uploaded = models.DateTimeField(auto_now_add=True, blank=False)
     date_modified = models.DateTimeField(auto_now=True, blank=False)
     date_published = models.DateTimeField(auto_now=True)
-    privacy_option = models.IntegerField(privacy_choices)
+    privacy_option = models.IntegerField(choices=privacy_choices)
+    size = models.PositiveIntegerField(default=0, editable=False)
+
 
     class Meta:
         ordering = ['title', 'description']
@@ -56,14 +58,16 @@ class Photo(models.Model):
     def __unicode__(self):
         return self.description
 
-    def user_link(self):
+    def owner_link(self):
         return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.owner.id, self.owner)
 
-    user_link.allow_tags = True
-    user_link.short_description = "User"
+    owner_link.allow_tags = True
+    owner_link.short_description = "Owner"
 
-    def image_size(self):
-        return self.image.size
+
+    def save(self, *args, **kwargs):
+        self.size = self.image.size
+        super(Photo, self).save(*args, **kwargs)
 
 class Album(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Album_owner')
@@ -74,11 +78,14 @@ class Album(models.Model):
     date_uploaded = models.DateTimeField(auto_now_add=True, blank=False)
     date_modified = models.DateTimeField(auto_now=True, blank=False)
     date_published = models.DateTimeField(auto_now=True)
-    privacy_option = models.IntegerField(privacy_choices)
+    privacy_option = models.IntegerField(choices=privacy_choices)
 
     class Meta:
         abstract = False
         ordering = ['title', 'description']
+
+    def __unicode__(self):
+        return self.description
 
     def owner_link(self):
         return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.owner.id, self.owner)
@@ -87,8 +94,7 @@ class Album(models.Model):
     owner_link.short_description = "User"
 
 
-    def __unicode__(self):
-        return self.description
+
 
 
 class ImagrUser(AbstractUser):
@@ -105,6 +111,9 @@ class ImagrUser(AbstractUser):
             name = self.username
 
         return name
+
+
+
 
     def followers(self):
         """Returns a sql query object for list of self's followers"""
@@ -124,10 +133,10 @@ class ImagrUser(AbstractUser):
 
     def list_friends(self):
         friends = ImagrUser.objects.filter(
-            (Q(relationship_from__user_one=self) &
-             Q(relationship_from__friendship__exact=True)) |
-            (Q(relationship_to__user_two=self) &
-             Q(relationship_to__friendship__exact=True))
+            (Q(relationship_to__user_one=self) &
+             Q(relationship_to__friendship__exact=3)) |
+            (Q(relationship_from__user_two=self) &
+             Q(relationship_from__friendship__exact=3))
         )
         return friends
 
@@ -136,10 +145,12 @@ class ImagrUser(AbstractUser):
             relationship = self._relationship_with(a_user)
 
             if relationship is None:
-                Relationships(user_one=self,
+                relationship = Relationships(user_one=self,
                               user_two=a_user,
                               follower_status=0,
                               friendship=1)
+                relationship.full_clean()
+                relationship.save()
                 return
             if relationship is not None:
                 for slot in ['user_one', 'user_two']:
@@ -224,7 +235,7 @@ class ImagrUser(AbstractUser):
         my_relation = self._relationship_with(to_user)
         if not my_relation or my_relation.friendship != 3:
             return
-        my_relation.friendship = 3
+        my_relation.friendship = 0
         my_relation.save()
 
     def cancel_friendship_request(self, to_user):
