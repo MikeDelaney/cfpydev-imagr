@@ -133,10 +133,10 @@ class ImagrUser(AbstractUser):
 
     def list_friends(self):
         friends = ImagrUser.objects.filter(
-            (Q(relationship_from__user_one=self) &
-             Q(relationship_from__friendship__exact=True)) |
-            (Q(relationship_to__user_two=self) &
-             Q(relationship_to__friendship__exact=True))
+            (Q(relationship_to__user_one=self) &
+             Q(relationship_to__friendship__exact=3)) |
+            (Q(relationship_from__user_two=self) &
+             Q(relationship_from__friendship__exact=3))
         )
         return friends
 
@@ -235,7 +235,7 @@ class ImagrUser(AbstractUser):
         my_relation = self._relationship_with(to_user)
         if not my_relation or my_relation.friendship != 3:
             return
-        my_relation.friendship = 3
+        my_relation.friendship = 0
         my_relation.save()
 
     def cancel_friendship_request(self, to_user):
