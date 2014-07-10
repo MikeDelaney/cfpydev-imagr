@@ -2,7 +2,6 @@ from django.contrib import admin
 from imagr_images.models import Photo, Album, ImagrUser
 
 
-
 class PhotoAdmin(admin.ModelAdmin):
 
     list_display = ('title',
