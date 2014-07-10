@@ -146,9 +146,9 @@ class ImagrUser(AbstractUser):
 
             if relationship is None:
                 relationship = Relationships(user_one=self,
-                              user_two=a_user,
-                              follower_status=0,
-                              friendship=1)
+                                             user_two=a_user,
+                                             follower_status=0,
+                                             friendship=1)
                 relationship.full_clean()
                 relationship.save()
                 return
