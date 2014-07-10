@@ -1,8 +1,6 @@
 from django.test import TestCase
 from imagr_images.models import Photo, Album, ImagrUser, Relationships
-from django.core.files import File
 import datetime
-
 
 
 class PhotoTests(TestCase):
