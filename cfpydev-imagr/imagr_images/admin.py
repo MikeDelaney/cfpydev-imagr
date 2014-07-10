@@ -11,12 +11,13 @@ class PhotoAdmin(admin.ModelAdmin):
                     'height',
                     'width')
 
-    search_fields = ['title', 'size']
+    search_fields = ['owner__username', 'owner__first_name', 'owner__last_name', 'owner__email']
+
     readonly_fields = ('date_uploaded', 'date_modified', 'date_published',)
     date_hierarchy = 'date_published'
 
 class AlbumAdmin(admin.ModelAdmin):
-    search_fields = ['username', 'first_name', 'last_name', 'email']
+    search_fields = ['owner__username', 'owner__first_name', 'owner__last_name', 'owner__email']
     list_display = ('title', 'owner_link')
     readonly_fields = ('date_uploaded',
                        'date_modified',
