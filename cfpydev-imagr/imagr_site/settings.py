@@ -84,3 +84,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = '../imagr_images/uploaded_images'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)

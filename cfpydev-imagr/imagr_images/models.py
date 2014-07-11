@@ -4,7 +4,6 @@ from imagr_site import settings
 from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-import os
 
 
 FOLLOWING_BITS = {
@@ -183,9 +182,9 @@ class ImagrUser(AbstractUser):
                 relationship.friendship = 3
             else:
                 relationship = Relationships(user_one=self,
-                                    user_two=a_user,
-                                    follower_status=0,
-                                    friendship=3)
+                                             user_two=a_user,
+                                             follower_status=0,
+                                             friendship=3)
 
             relationship.full_clean()
             relationship.save()
