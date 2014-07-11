@@ -22,3 +22,7 @@ class AlbumAdmin(admin.ModelAdmin):
                        'date_modified',
                        'date_published')
 
+
+
+admin.site.register(Photo, PhotoAdmin)
+admin.site.register(Album, AlbumAdmin)
