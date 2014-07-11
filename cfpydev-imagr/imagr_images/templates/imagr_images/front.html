@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Imagr{% endblock %}
+
+{% block custom_css %}<link href="/static/imagr_images/jumbotron.css" rel="stylesheet">{% endblock %}
+
+{%  block navbar_detail %}
+<div class="navbar-collapse collapse">
+  <form class="navbar-form navbar-right" role="form">
+    <div class="form-group">
+      <input type="text" placeholder="Username" class="form-control">
+    </div>
+    <div class="form-group">
+      <input type="password" placeholder="Password" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-success">Sign in</button>
+  </form>
+</div><!--/.navbar-collapse -->
+{% endblock %}
+
+{% block jumbo %}
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h1>Welcome to Imagr!</h1>
+    <p>Here you can share pictures with your friends. You can also follow people who take better photos than you do.</p>
+    <p><a class="btn btn-primary btn-lg" role="button">Sign up here &raquo;</a></p>
+  </div>
+</div>
+{% endblock %}
+
+{% block container %}
+<!-- Example row of columns -->
+<div class="row">
+  <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+   <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+   <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+   <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+   <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+   <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+   <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+   <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+   <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+</div>
+
+<hr>
+
+<footer>
+  <p>&copy; Imagr 2014</p>
+</footer>
+{% endblock %}

@@ -10,4 +10,5 @@ urlpatterns = patterns('',
 
     url(r'^albums/', include('imagr_images.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^imagr_images/', include('imagr_images.urls')),
 )
