@@ -89,3 +89,10 @@ MEDIA_ROOT = '../imagr_images/uploaded_images'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
+
+TEMPLATE_LOADERS = (
+    ('django.template.loaders.cached.Loader', (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+    )),
+)
