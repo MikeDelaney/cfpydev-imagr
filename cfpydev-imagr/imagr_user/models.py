@@ -1,0 +1,216 @@
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
+
+
+FOLLOWING_BITS = {
+    'user_one': 1,
+    'user_two': 2
+}
+
+FOLLOWER_STATUSES = (
+    (0, u'not following'),
+    (1, u'user_one following user_two'),
+    (2, u'user_two following user_one'),
+    (3, u'both following'),
+)
+
+FOLLOWER_SYMBOLS = {
+    0: u' X ',
+    1: u' +->',
+    2: u'<-+ ',
+    3: u'<+-+>',
+}
+
+FRIEND_STATUSES = (
+    (0, u'not friends'),
+    (1, u'user_one requesting user_two'),
+    (2, u'user_two requesting user_one'),
+    (3, u'friends'),
+)
+
+class ImagrUser(AbstractUser):
+    relations = models.ManyToManyField('ImagrUser',
+                                       through='Relationships',
+                                       blank=True)
+
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+
+    def __unicode__(self):
+        if self.first_name and self.last_name:
+            name = self.first_name + ' ' + self.last_name
+        else:
+            name = self.username
+
+        return name
+
+    def followers(self):
+        """Returns a sql query object for list of self's followers"""
+        user_one_followers = (
+            Q(relationship_from__user_two=self) & \
+            Q(relationship_from__follower_status__in=[1, 3]))
+
+        user_two_followers = (
+            Q(relationship_to__user_one=self) & \
+            Q(relationship_to__follower_status__in=[2, 3]))
+
+        followers = ImagrUser.objects.filter(
+            Q(user_one_followers | user_two_followers)
+        )
+
+        return followers
+
+    def list_friends(self):
+        friends = ImagrUser.objects.filter(
+            (Q(relationship_to__user_one=self) &
+             Q(relationship_to__friendship__exact=3)) |
+            (Q(relationship_from__user_two=self) &
+             Q(relationship_from__friendship__exact=3))
+        )
+        return friends
+
+    def request_friendship(self, a_user):
+        if a_user not in self.list_friends():
+            relationship = self._relationship_with(a_user)
+
+            if relationship is None:
+                relationship = Relationships(user_one=self,
+                                             user_two=a_user,
+                                             follower_status=0,
+                                             friendship=1)
+                relationship.full_clean()
+                relationship.save()
+                return
+            if relationship is not None:
+                for slot in ['user_one', 'user_two']:
+                    if getattr(relationship, slot) == self:
+                        if relationship.friendship not in (1, 2):
+                            bitmask = FOLLOWING_BITS[slot]
+                            relationship.friendship = relationship.friendship | bitmask
+                            break
+        relationship.full_clean()
+        relationship.save()
+
+    def accept_friendship_request(self, a_user):
+        if a_user not in self.list_friends():
+            relationship = self._relationship_with(a_user)
+
+            if relationship is None:
+                return
+            if relationship is not None:
+                relationship.friendship = 3
+            else:
+                relationship = Relationships(user_one=self,
+                                             user_two=a_user,
+                                             follower_status=0,
+                                             friendship=3)
+
+            relationship.full_clean()
+            relationship.save()
+
+    def following(self):
+        """Returns a sql query object for list of users self is following"""
+        following_user_one = (
+            Q(relationship_to__user_one=self) &
+            Q(relationship_to__follower_status__in=[1, 3])
+        )
+
+        following_user_two = (
+            Q(relationship_from__user_two=self) &
+            Q(relationship_from__follower_status__in=[2, 3])
+        )
+
+        followers = ImagrUser.objects.filter(
+            Q(following_user_one | following_user_two)
+        )
+
+        return followers
+
+    def follow(self, a_user):
+        """
+        self follow other users.
+        If a relationship does not exist between self and user, one is created.
+        Relationship is validated before save. Calling code handles errors.
+        """
+        if a_user not in self.following():
+            relationship = self._relationship_with(a_user)
+            if relationship is not None:
+                for slot in ['user_one', 'user_two']:
+                    if getattr(relationship, slot) == self:
+                        bitmask = FOLLOWING_BITS[slot]
+                        relationship.follower_status = relationship.follower_status | bitmask
+                        break
+            else:
+
+                relationship = Relationships(user_one=self,
+                                             user_two=a_user,
+                                             follower_status=1,
+                                             friendship=0)
+                relationship.full_clean()
+                relationship.save()
+
+    def unfollow(self, to_user):
+        my_relation = self._relationship_with(to_user)
+        if not my_relation or (to_user not in self.following()):
+            return
+        for slot in ['user_one', 'user_two']:
+            if getattr(my_relation, slot) != self:
+                mask = FOLLOWING_BITS[slot]
+                my_relation.follower_status &= mask
+                my_relation.save()
+                return
+
+    def end_friendship(self, to_user):
+        my_relation = self._relationship_with(to_user)
+        if not my_relation or my_relation.friendship != 3:
+            return
+        my_relation.friendship = 0
+        my_relation.save()
+
+    def cancel_friendship_request(self, to_user):
+        my_relation = self._relationship_with(to_user)
+        if not my_relation or my_relation == 0 or my_relation == 3:
+            return
+        for slot in ['user_one', 'user_two']:
+            if getattr(my_relation, slot) != self:
+                mask = FOLLOWING_BITS[slot]
+                my_relation.friendship &= mask
+                my_relation.save()
+                return
+
+
+    def _relationship_with(self, a_user):
+        """Returns a relationship object(row from Relationships table) or none if there is no existing relationship."""
+        relationship = None
+        try:
+            relationship = Relationships.objects.get(user_one=self, user_two=a_user)
+        except Relationships.DoesNotExist:
+            try:
+                relationship = Relationships.objects.get(user_one=a_user, user_two=self)
+            except Relationships.DoesNotExist:
+                pass
+        return relationship
+
+
+
+class Relationships(models.Model):
+
+    user_one = models.ForeignKey('ImagrUser', related_name='relationship_from')
+    user_two = models.ForeignKey('ImagrUser', related_name='relationship_to')
+    follower_status = models.IntegerField(choices=FOLLOWER_STATUSES)
+    friendship = models.IntegerField(choices=FRIEND_STATUSES)
+
+
+    def __unicode__(self):
+        relationship_symbol = FOLLOWER_SYMBOLS.get(self.follower_status)
+        if self.friendship:
+            relationship_symbol += u"(F)"
+
+        representation = u'{} {} {}'.format(unicode(self.user_one),
+                                            relationship_symbol,
+                                            unicode(self.user_two))
+
+        return representation
