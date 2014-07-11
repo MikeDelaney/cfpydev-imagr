@@ -1,6 +1,5 @@
 from django.contrib import admin
-from imagr_images.models import Photo, Album, ImagrUser
-
+from imagr_images.models import Photo, Album
 
 
 class PhotoAdmin(admin.ModelAdmin):
@@ -23,10 +22,3 @@ class AlbumAdmin(admin.ModelAdmin):
                        'date_modified',
                        'date_published')
 
-class ImagrUserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'first_name', 'last_name', 'email')
-    search_fields = ['username', 'first_name', 'last_name', 'email']
-
-admin.site.register(Photo, PhotoAdmin)
-admin.site.register(Album, AlbumAdmin)
-admin.site.register(ImagrUser, ImagrUserAdmin)

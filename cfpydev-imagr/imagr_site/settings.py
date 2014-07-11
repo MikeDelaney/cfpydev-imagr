@@ -26,7 +26,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'imagr_images.ImagrUser'
+AUTH_USER_MODEL = 'imagr_user.ImagrUser'
 
 # Application definition
 
@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'south',
     'sorl.thumbnail',
     'imagr_images',
+    'imagr_user',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -85,3 +86,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = '../imagr_images/uploaded_images'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
+TEMPLATE_LOADERS = (
+    ('django.template.loaders.cached.Loader', (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+    )),
+)
