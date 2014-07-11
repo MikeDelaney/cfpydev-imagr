@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
 {% block container %}
-<p>Hello, World! Welcome to the home page!</p>
+<p>Welcome to your home page {{ user.first_name }} {{ user.last_name }}!</p>
+
+{% for album in album_list %}
+    <li>{{ album.title }}</li>
+{% endfor %}
 {% endblock %}

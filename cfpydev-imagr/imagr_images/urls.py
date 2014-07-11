@@ -4,5 +4,5 @@ from imagr_images import views
 
 urlpatterns = patterns('',
                        url(r'^$', views.front, name='front'),
-                       url(r'^home/$', views.home, name='home'),
+                       url(r'^(?P<user_id>\d+)/home/$', views.home, name='home'),
                        )
