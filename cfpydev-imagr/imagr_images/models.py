@@ -82,7 +82,8 @@ class Album(models.Model):
         return self.description
 
     def owner_link(self):
-        return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.owner.id, self.owner)
+        return '<a href="%s">%s</a>' % (reverse(
+            "admin:imagr_user_imagruser_change", args=(self.owner.id,)), escape(self.owner))
 
     owner_link.allow_tags = True
     owner_link.short_description = "User"
