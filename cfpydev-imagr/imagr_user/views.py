@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.shortcuts import get_list_or_404
 from imagr_images.models import Album, Photo
