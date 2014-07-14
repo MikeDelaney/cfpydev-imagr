@@ -3,7 +3,7 @@ from django.conf import settings
 from imagr_user.models import ImagrUser, Relationships
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import escape
-
+from sorl.thumbnail import ImageField
 
 privacy_choices = ((0, 'Private'), (1, 'Shared'), (2, 'Public'))
 
@@ -15,7 +15,7 @@ class Photo(models.Model):
     height = models.PositiveIntegerField(default=0, editable=False)
     width = models.PositiveIntegerField(default=0, editable=False)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
-    title = models.CharField(max_length=127)
+    title = models.CharField(max_length=127, unique=True)
     description = models.CharField(max_length=127)
     date_uploaded = models.DateTimeField(auto_now_add=True, blank=False)
     date_modified = models.DateTimeField(auto_now=True, blank=False)
@@ -56,7 +56,7 @@ class Photo(models.Model):
 
 class Album(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Album_owner')
-    title = models.CharField(max_length=127)
+    title = models.CharField(max_length=127, unique=True)
     description = models.CharField(max_length=127)
     photos = models.ManyToManyField(
         Photo,
@@ -80,6 +80,8 @@ class Album(models.Model):
 
     def __unicode__(self):
         return self.description
+
+
 
     def owner_link(self):
         return '<a href="%s">%s</a>' % (reverse(
