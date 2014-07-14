@@ -45,10 +45,10 @@ def photoView(request, photo_id):
                                                               {'photo': photo}))
 
 def streamView(request):
-    photo = get_users_photo_list(photo_id)
+    photo_list = get_users_photo_list(photo_id)
     return render_to_response('imagr_images/stream.html',
                               context_instance=RequestContext(request,
-                                                              {'photo': photo}))
+                                                              {'photo': photo_list}))
 
 
 
