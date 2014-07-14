@@ -1,5 +1,22 @@
 {% extends "base.html" %}
 
+{% block title %}Imagr{% endblock %}
+
+{% block custom_css %}<link href="/static/imagr_images/jumbotron.css" rel="stylesheet">{% endblock %}
+
+
+
 {% block container %}
-<p>Hello, World! Welcome to the home page!</p>
+<!-- Example row of columns -->
+<div class="row">
+  <div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="#">
+           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      </a>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; Imagr 2014</p>
+</footer>
 {% endblock %}

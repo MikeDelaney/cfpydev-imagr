@@ -13,7 +13,7 @@ class Photo(models.Model):
     height = models.PositiveIntegerField(default=0, editable=False)
     width = models.PositiveIntegerField(default=0, editable=False)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='photo_owner')
-    title = models.CharField(max_length=127)
+    title = models.CharField(max_length=127, unique=True)
     description = models.CharField(max_length=127)
     date_uploaded = models.DateTimeField(auto_now_add=True, blank=False)
     date_modified = models.DateTimeField(auto_now=True, blank=False)
@@ -53,7 +53,7 @@ class Photo(models.Model):
 
 class Album(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Album_owner')
-    title = models.CharField(max_length=127)
+    title = models.CharField(max_length=127, unique=True)
     description = models.CharField(max_length=127)
     photos = models.ManyToManyField(
         Photo,
