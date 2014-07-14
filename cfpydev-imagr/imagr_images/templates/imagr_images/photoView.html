@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+<!--{% load thumbnail %}-->
+{% block title %}Imagr{% endblock %}
+
+{% block container %}
+
+
+
+
+<div class="row">
+  <div class="col-lg-4 col-sm-6 col-xs-12">
+
+      <img class="media-object" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}">
+
+  </div>
+</div>
+
+
+
+{% endblock %}

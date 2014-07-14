@@ -22,7 +22,7 @@ SECRET_KEY = '_0)ionh8p(-xw=uh-3_8un)^xo+=&obsad&lhohn-d93j(p!21'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -86,6 +86,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = '../imagr_images/uploaded_images'
+MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
@@ -97,3 +98,21 @@ TEMPLATE_LOADERS = (
         'django.template.loaders.app_directories.Loader',
     )),
 )
+
+# sorl.thumbnail settings
+# THUMBNAIL_FORMAT = 'PNG'
+# THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
+THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.cached_db_kvstore.KVStore'
+# THUMBNAIL_REDIS_HOST = 'localhost'  # default
+# THUMBNAIL_REDIS_PORT = 6379  # default
+THUMBNAIL_DEBUG = DEBUG
+THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.pil_engine.Engine'
+THUMBNAIL_CACHE = 'default'
+CACHES = {
+    'default': {
+        # 'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        # 'LOCATION': '127.0.0.1:11211',
+        'LOCATION': '/var/tmp/django_cache',
+    }
+}
