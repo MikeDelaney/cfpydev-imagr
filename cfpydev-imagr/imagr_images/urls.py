@@ -5,4 +5,5 @@ urlpatterns = patterns('',
     url(r'^(?P<album_id>\d+)/$', views.albumView, name='albums'),
     url(r'^home/', include('imagr_user.urls')),
     url(r'^(?P<photo_id>\d+)/$', views.photoView, name='photo'),
+    url(r'^(?P<user_id>\d+)/$', views.streamView, name='stream'),
     )
