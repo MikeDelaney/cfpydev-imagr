@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from imagr_user.models import ImagrUser, Relationships
+from django.core.urlresolvers import reverse
+from django.template.defaultfilters import escape
 
 
 privacy_choices = ((0, 'Private'), (1, 'Shared'), (2, 'Public'))
@@ -30,7 +32,8 @@ class Photo(models.Model):
         return self.description
 
     def owner_link(self):
-        return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.owner.id, self.owner)
+        return '<a href="%s">%s</a>' % (reverse(
+            "admin:imagr_user_imagruser_change", args=(self.owner.id,)), escape(self.owner))
 
     owner_link.allow_tags = True
     owner_link.short_description = "Owner"
@@ -79,7 +82,8 @@ class Album(models.Model):
         return self.description
 
     def owner_link(self):
-        return '<a href="/admin/imagr_images/imagruser/%s">%s</a>' % (self.owner.id, self.owner)
+        return '<a href="%s">%s</a>' % (reverse(
+            "admin:imagr_user_imagruser_change", args=(self.owner.id,)), escape(self.owner))
 
     owner_link.allow_tags = True
     owner_link.short_description = "User"

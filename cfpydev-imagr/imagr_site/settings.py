@@ -37,7 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'south',
+    #'south',
+    'sorl.thumbnail',
     'imagr_images',
     'imagr_user',
 )
@@ -96,3 +97,10 @@ TEMPLATE_LOADERS = (
         'django.template.loaders.app_directories.Loader',
     )),
 )
+
+# sorl.thumbnail settings
+# THUMBNAIL_FORMAT = 'PNG'
+# THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
+# THUMBNAIL_REDIS_HOST = 'localhost'  # default
+# THUMBNAIL_REDIS_PORT = 6379  # default
+THUMBNAIL_DEBUG = True
