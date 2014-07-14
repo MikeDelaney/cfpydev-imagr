@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-
+{% load thumbnail %}
 {% block title %}Imagr{% endblock %}
 
-{% block custom_css %}<link href="/static/imagr_images/jumbotron.css" rel="stylesheet">{% endblock %}
-
-
-
 {% block container %}
-<!-- Example row of columns -->
+
+
+{% for photo in photo_list %}
+
 <div class="row">
   <div class="col-lg-4 col-sm-6 col-xs-12">
-      <a href="#">
-           <img src="http://placehold.it/800x600" class="thumbnail img-responsive">
+      <a href="/photo/{{ photo.id }}">
+           {% thumbnail photo.image "128x128" crop="center" as im %}
+                <img class="media-object" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+            {% endthumbnail %}
       </a>
   </div>
 </div>
 
-<footer>
-  <p>&copy; Imagr 2014</p>
-</footer>
+
+{% endfor %}
 {% endblock %}

@@ -101,6 +101,15 @@ TEMPLATE_LOADERS = (
 # sorl.thumbnail settings
 # THUMBNAIL_FORMAT = 'PNG'
 # THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
+THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.cached_db_kvstore.KVStore'
 # THUMBNAIL_REDIS_HOST = 'localhost'  # default
 # THUMBNAIL_REDIS_PORT = 6379  # default
 THUMBNAIL_DEBUG = True
+THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.pgmagick_engine.Engine'
+# THUMBNAIL_CACHE = 'default'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}

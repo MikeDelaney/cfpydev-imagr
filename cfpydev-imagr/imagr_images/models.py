@@ -3,7 +3,7 @@ from django.conf import settings
 from imagr_user.models import ImagrUser, Relationships
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import escape
-
+from sorl.thumbnail import ImageField
 
 privacy_choices = ((0, 'Private'), (1, 'Shared'), (2, 'Public'))
 
@@ -80,6 +80,8 @@ class Album(models.Model):
 
     def __unicode__(self):
         return self.description
+
+
 
     def owner_link(self):
         return '<a href="%s">%s</a>' % (reverse(
