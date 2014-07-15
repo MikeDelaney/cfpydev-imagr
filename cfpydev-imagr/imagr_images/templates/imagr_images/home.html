@@ -2,7 +2,7 @@
 {% load thumbnail %}
 {% block title %}Home{% endblock %}
 {% block container %}
-<h1>Welcome to your home page {{ user.first_name }} {{ user.last_name }}!</h1>
+<h1>Welcome to your home page {{ ImagrUser.first_name }} {{ ImagrUser.last_name }}!</h1>
 
 <ul class="media-list">
 {% for album in album_list %}
