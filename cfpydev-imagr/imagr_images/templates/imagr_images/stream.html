@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block title %}Stream{% endblock %}
+{% block container %}
+<h1>{{ user.first_name }} {{ user.last_name }}!</h1>
+
+{% for photo in photo_list %}
+<!--     <li>{{ album.title }}</li> -->
+<!-- {% thumbnail album.cover_photo.url "64x64" crop="center" as im %}
+  <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+{% endthumbnail %} -->
+    <ul class="media-list">
+      <li class="media">
+            {% thumbnail album.cover_photo.get.image "128x128" crop="center" as im %}
+                <img class="media-object" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+            {% endthumbnail %}
+        <div class="media-body">
+            <h4 class="media-heading">{{ photo.title }}</h4>
+            <p>{{ photo.description }}
+        </div>
+      </li>
+    </ul>
+{% endfor %}
+{% endblock %}
+
+
+
