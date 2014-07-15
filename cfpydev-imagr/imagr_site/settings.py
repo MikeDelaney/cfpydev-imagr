@@ -7,7 +7,7 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
-
+from configurations import Configuration
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -81,6 +81,7 @@ USE_L10N = True
 USE_TZ = True
 
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
@@ -116,3 +117,12 @@ CACHES = {
         'LOCATION': '/var/tmp/django_cache',
     }
 }
+
+
+class Dev(Configuration):
+    DEBUG = True
+DJANGO_CONFIGURATION='Dev'
+DJANGO_SETTINGS_MODULE=imagr_site.settings
+
+
+
