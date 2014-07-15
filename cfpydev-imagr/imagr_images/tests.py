@@ -26,7 +26,7 @@ class AlbumTests(TestCase):
         self.assertEqual(album1.privacy_option, 1)
 
 class test_photoView(TestCase):
-    
+
     def setUp(self):
 
         self.usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe', username='Eyuel')
