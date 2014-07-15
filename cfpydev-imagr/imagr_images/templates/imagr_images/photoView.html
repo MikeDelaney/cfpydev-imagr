@@ -8,11 +8,14 @@
 
 
 <div class="row">
-  <div class="col-lg-4 col-sm-6 col-xs-12">
 
-      <img class="media-object" src="{{ photo.url }}" width="{{ photo.width }}" height="{{ photo.height }}">
 
-  </div>
+      <img class="media-object" src="{{ photo.image.url }}" width="{{ photo.width }}" height="{{ photo.height }}">
+
+    <div class="media-body">
+          <h4 class="media-heading">{{ photo.title }}</h4>
+          <p>{{ photo.description }}
+     </div>
 </div>
 
 

@@ -4,19 +4,19 @@
 
 {% block container %}
 
+<div class="row">
 
 {% for photo in photo_list %}
 
-<div class="row">
-  <div class="col-lg-4 col-sm-6 col-xs-12">
-      <a href="/photo/{{ photo.id }}">
+<div class="col-lg-4 col-sm-6 col-xs-12">
+      <a href="{% url 'photo' photo.id %}">
            {% thumbnail photo.image "128x128" crop="center" as im %}
-                <img class="media-object" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                <img class="thumbnail img-responsive" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
             {% endthumbnail %}
       </a>
-  </div>
-</div>
 
+ </div>
 
 {% endfor %}
+</div>
 {% endblock %}

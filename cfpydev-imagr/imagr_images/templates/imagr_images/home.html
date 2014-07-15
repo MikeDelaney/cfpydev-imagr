@@ -1,27 +1,39 @@
 {% extends "base.html" %}
 {% load thumbnail %}
 {% block title %}Home{% endblock %}
+
+{% block navbar_detail %}
+    <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="{% url 'home' user.id %}">Home</a></li>
+            <!-- Disable About/Contact until destinations exist
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li> -->
+          </ul>
+    </div><!--/.nav-collapse -->
+{% endblock %}
+
 {% block container %}
 <h1>Welcome to your home page {{ user.first_name }} {{ user.last_name }}!</h1>
 
-{% for album in album_list %}
-<!--     <li>{{ album.title }}</li> -->
-<!-- {% thumbnail album.cover_photo.url "64x64" crop="center" as im %}
-  <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-{% endthumbnail %} -->
-    <ul class="media-list">
-      <li class="media">
-        <a class="pull-left" href="/album/{{ album.id }}">
-            {% thumbnail album.cover_photo.get.image "128x128" crop="center" as im %}
-                <img class="media-object" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-            {% endthumbnail %}
-          <!-- <img class="media-object" src="http://placehold.it/64x64" alt="..."> -->
-        </a>
-        <div class="media-body">
-          <h4 class="media-heading">{{ album.title }}</h4>
-          <p>{{ album.description }}
+<div class="h1">{{ user.first_name }}</div>
+
+<div class="row">
+    {% for album in album_list %}
+      <div class="col-lg-4 col-sm-6 col-md-4">
+        <div class="thumbnail">
+            <a href="/album/{{ album.id }}">
+                {% thumbnail album.cover_photo.get.image "242x200" crop="center" as im %}
+                    <img class="thumbnail img-responsive" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+            </a>
+
+            <div class="caption">
+              <h3>{{ album.title }}</h3>
+              <p> {{ album.description }}</p>
+            </div>
         </div>
-      </li>
-    </ul>
-{% endfor %}
+      </div>
+    {% endfor %}
+</div>
 {% endblock %}

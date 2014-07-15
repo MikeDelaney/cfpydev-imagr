@@ -24,3 +24,22 @@ class AlbumTests(TestCase):
         self.assertEqual(album1.title, "album1")
         self.assertEqual(album1.description, "test album 1")
         self.assertEqual(album1.privacy_option, 1)
+
+class test_photoView(TestCase):
+    
+    def setUp(self):
+
+        self.usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe', username='Eyuel')
+        self.usr2 = ImagrUser(first_name='Muazz', last_name='Mira', username='Muazz')
+        self.usr3 = ImagrUser(first_name='Mike', last_name='Delany', username='Mike')
+
+        self.usr1.save()
+        self.usr2.save()
+        self.usr3.save()
+
+    def tearDown(self):
+
+        self.usr1.delete()
+        self.usr2.delete()
+        self.usr3.delete()
+
