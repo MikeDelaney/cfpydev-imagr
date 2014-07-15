@@ -4,6 +4,7 @@ from imagr_images.models import Photo, Album
 from django.test.client import Client
 from django.db import models
 from django.core.files import File
+import os
 
 
 class ImagrUser_Relations_Test(TestCase):
@@ -105,7 +106,8 @@ class Home_test(TestCase):
                                              last_name='Mira',
                                              username='Muazzez')
         # create photos
-        with open('/home/miked/projects/django-project/cfpydev-imagr/cfpydev-imagr/imagr_images/static/front_img/7fTNh.jpg', 'r') as f:
+        base_dir = os.getcwd() + '/imagr_images/static/front_img/'
+        with open(base_dir + '7fTNh.jpg', 'r') as f:
             photo_file = File(f)
             photo1 = Photo()
             photo1.image = photo_file
@@ -113,7 +115,7 @@ class Home_test(TestCase):
             photo1.owner = self.usr1
             photo1.privacy_option = 2
             photo1.save()
-        with open('/home/miked/projects/django-project/cfpydev-imagr/cfpydev-imagr/imagr_images/static/front_img/beer.jpg', 'r') as f:
+        with open(base_dir + 'beer.jpg', 'r') as f:
             photo_file = File(f)
             photo2 = Photo()
             photo2.image = photo_file
