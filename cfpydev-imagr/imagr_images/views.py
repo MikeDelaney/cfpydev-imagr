@@ -7,8 +7,8 @@ def get_followings_friends (user_id):
     user = ImagrUser.objects.get(pk=user_id)
     user_list = []
     user_list.append(user)
-    user_list += [item for item in ImagrUser.following if not item in user_list]
-    user_list += [item for item in user.list_friends if not item in user_list]
+    user_list += [item for item in user.following() if not item in user_list]
+    user_list += [item for item in user.list_friends() if not item in user_list]
     return user_list
 
 def get_photo_list(album_id):
