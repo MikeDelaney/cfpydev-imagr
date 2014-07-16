@@ -1,8 +1,12 @@
 from django.test import TestCase
 from imagr_images.models import Photo, Album, ImagrUser, Relationships
+<<<<<<< HEAD
 from imagr_images.views import albumView, photoView
+=======
+from imagr_images.views import streamView
+>>>>>>> f3bc87f4b20f6b1c319e36160a82eec2cf40e6e4
 import datetime
-from django.test.client import Client
+from django.test.client import RequestFactory
 from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.test.client import Client, RequestFactory
@@ -52,12 +56,6 @@ class test_albumView(TestCase):
                                           privacy_option=2)
         self.album.photos = [self.photo]
 
-        self.factory = RequestFactory()
-
-    def tearDown(self):
-        self.usr1.delete()
-        self.photo.delete()
-        self.album.delete()
 
     def test_albumView(self):
         request = self.factory.get(reverse('home'))
