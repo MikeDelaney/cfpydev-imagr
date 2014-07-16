@@ -85,27 +85,34 @@ class StreamViewTests(TestCase):
 
     def test_stream(self):
             # db den fotolar gercekten userlara yerlesmis mi bak
-        usr1_photos = Photo.objects.filter(owner__exact=self.usr1.id)
-        usr2_photos = Photo.objects.filter(owner__exact=self.usr2.id)
-        usr3_photos = Photo.objects.filter(owner__exact=self.usr3.id)
-        usr4_photos = Photo.objects.filter(owner__exact=self.usr4.id)
-        usr5_photos = Photo.objects.filter(owner__exact=self.usr5.id)
-        assert len(usr1_photos) == 5
-        assert len(usr2_photos) == 5
-        assert len(usr3_photos) == 5
-        assert len(usr4_photos) == 5
-        assert len(usr5_photos) == 0
+        db_photo_list = {}
+        db_photo_list[self.usr1] = Photo.objects.filter(owner__exact=self.usr1.id)
+        db_photo_list[self.usr2] = Photo.objects.filter(owner__exact=self.usr2.id)
+        db_photo_list[self.usr3] = Photo.objects.filter(owner__exact=self.usr3.id)
+        db_photo_list[self.usr4] = Photo.objects.filter(owner__exact=self.usr4.id)
+        db_photo_list[self.usr5] = Photo.objects.filter(owner__exact=self.usr5.id)
+        assert len(db_photo_list[self.usr1]) == 5
+        assert len(db_photo_list[self.usr2]) == 5
+        assert len(db_photo_list[self.usr3]) == 5
+        assert len(db_photo_list[self.usr4]) == 5
+        assert len(db_photo_list[self.usr5]) == 0
+
+        # it should be for user1
+        friend_following_list = [self.usr1, self.usr2, self.usr3]
+        non_ff_list = [self.usr4, self.usr5]
 
         c = Client()
-        response = c.get('/stream/' + str(self.usr1.id) + '/')
-        print response
-        # self.assertEqual(response.status_code, 200)
+        response = c.get('/stream/')
+        self.assertEqual(response.status_code, 200)
 
+        for user in friend_following_list:
+            for photo in db_photo_list[user]:
+                assert photo in response
 
+        for user in non_ff_list:
+            for photo in db_photo_list[user]:
+                assert photo not in response
 
-        # eger hersey yolundaysa:
-        # userlar arasinda iliskileri kurup test caseleri yazabilirsin
-        # super!
 
 
 
