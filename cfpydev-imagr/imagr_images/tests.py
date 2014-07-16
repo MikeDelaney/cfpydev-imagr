@@ -27,6 +27,24 @@ class AlbumTests(TestCase):
         self.assertEqual(album1.description, "test album 1")
         self.assertEqual(album1.privacy_option, 1)
 
+
+class test_photoView(TestCase):
+
+    def setUp(self):
+        self.usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe', username='Eyuel')
+        self.usr2 = ImagrUser(first_name='Muazz', last_name='Mira', username='Muazz')
+        self.usr3 = ImagrUser(first_name='Mike', last_name='Delany', username='Mike')
+
+        self.usr1.save()
+        self.usr2.save()
+        self.usr3.save()
+
+    def tearDown(self):
+        self.usr1.delete()
+        self.usr2.delete()
+        self.usr3.delete()
+
+
 class StreamViewTests(TestCase):
     def setUp(self):
         self.usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe', username='Eyuel')
@@ -40,6 +58,7 @@ class StreamViewTests(TestCase):
         self.usr3.save()
         self.usr4.save()
         self.usr5.save()
+
         user_list = [ self.usr1, self.usr2, self.usr3, self.usr4]
 
         photo_list = ["{}_{}_{}".format("photo", item.username, i) for item in user_list for i in range(5)]
@@ -112,7 +131,6 @@ class StreamViewTests(TestCase):
         for user in non_ff_list:
             for photo in db_photo_list[user]:
                 assert photo not in response
-
 
 
 

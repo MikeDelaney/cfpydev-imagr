@@ -11,7 +11,7 @@
 {% endthumbnail %} -->
     <ul class="media-list">
       <li class="media">
-            {% thumbnail album.cover_photo.get.image "128x128" crop="center" as im %}
+            {% thumbnail photo.image "128x128" crop="center" as im %}
                 <img class="media-object" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
             {% endthumbnail %}
         <div class="media-body">

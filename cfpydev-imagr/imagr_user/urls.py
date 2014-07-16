@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from imagr_user import views
+from imagr_images import views as imagesViews
 
 urlpatterns = patterns('',
-                       url(r'^(?P<user_id>\d+)/$',
-                           views.home,
-                           name='home'),)
+                       url(r'^$', views.home, name='home'),
+                       )
