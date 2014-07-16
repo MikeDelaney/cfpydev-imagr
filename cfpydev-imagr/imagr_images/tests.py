@@ -1,7 +1,8 @@
 from django.test import TestCase
 from imagr_images.models import Photo, Album, ImagrUser, Relationships
+from imagr_images.views import streamView
 import datetime
-from django.test.client import Client
+from django.test.client import RequestFactory
 from django.core.files import File
 
 
@@ -47,6 +48,8 @@ class test_photoView(TestCase):
 
 class StreamViewTests(TestCase):
     def setUp(self):
+        self.factory = RequestFactory()
+
         self.usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe', username='Eyuel')
         self.usr2 = ImagrUser(first_name='Muazz', last_name='Mira', username='Muazz')
         self.usr3 = ImagrUser(first_name='Mike', last_name='Delany', username='Mike')
@@ -66,8 +69,8 @@ class StreamViewTests(TestCase):
         date_list = [base - datetime.timedelta(days=x) for x in range(0, 20)]
         date_index = 0
         user_index = 0
-        for item in photo_list:
-            with open('/Users/muazzezmira/projects/django_imagr/cfpydev-imagr/cfpydev-imagr/imagr_images/static/front_img/7fTNh.jpg', 'r') as f:
+        with open('/Users/muazzezmira/projects/django_imagr/cfpydev-imagr/cfpydev-imagr/imagr_images/static/front_img/7fTNh.jpg', 'rb') as f:
+            for item in photo_list:
                 photo_file = File(f)
                 photo = Photo()
                 photo.image = photo_file
@@ -76,10 +79,10 @@ class StreamViewTests(TestCase):
                 photo.privacy_option = 2
                 photo.date_uploaded=date_list[date_index]
                 photo.save()
-            date_index +=1
-            if not date_index % 5:
-                user_index += 1
-            photo.save()
+                date_index +=1
+                if not date_index % 5:
+                    user_index += 1
+                photo.save()
 
         self.usr1.request_friendship(self.usr2)
         self.usr2.accept_friendship_request(self.usr1)
@@ -104,56 +107,39 @@ class StreamViewTests(TestCase):
 
     def test_stream(self):
             # db den fotolar gercekten userlara yerlesmis mi bak
-        usr1_photos = Photo.objects.filter(owner__exact=self.usr1.id)
-        usr2_photos = Photo.objects.filter(owner__exact=self.usr2.id)
-        usr3_photos = Photo.objects.filter(owner__exact=self.usr3.id)
-        usr4_photos = Photo.objects.filter(owner__exact=self.usr4.id)
-        usr5_photos = Photo.objects.filter(owner__exact=self.usr5.id)
-        assert len(usr1_photos) == 5
-        assert len(usr2_photos) == 5
-        assert len(usr3_photos) == 5
-        assert len(usr4_photos) == 5
-        assert len(usr5_photos) == 0
+        db_photo_list = {}
+        db_photo_list[self.usr1] = list(Photo.objects.filter(owner__exact=self.usr1.id))
+        db_photo_list[self.usr2] = Photo.objects.filter(owner__exact=self.usr2.id)
+        db_photo_list[self.usr3] = Photo.objects.filter(owner__exact=self.usr3.id)
+        db_photo_list[self.usr4] = Photo.objects.filter(owner__exact=self.usr4.id)
+        db_photo_list[self.usr5] = Photo.objects.filter(owner__exact=self.usr5.id)
 
-        c = Client()
-        response = c.get('/stream/' + str(self.usr1.id) + '/')
-        print response
-        # self.assertEqual(response.status_code, 200)
+        assert len(db_photo_list[self.usr1]) == 5
+        assert len(db_photo_list[self.usr2]) == 5
+        assert len(db_photo_list[self.usr3]) == 5
+        assert len(db_photo_list[self.usr4]) == 5
+        assert len(db_photo_list[self.usr5]) == 0
 
-    user_list = [self.usr1, self.usr2, self.usr3, self.usr4]
+        friend_following_list = [self.usr1, self.usr2, self.usr3]
+        non_ff_list = [self.usr4, self.usr5]
 
-    photo_list = ["{}_{}_{}".format("photo", item.username, i) for item in user_list for i in range(5)]
-    base = datetime.datetime.today()
-    date_list = [base - datetime.timedelta(days=x) for x in range(0, 20)]
-    date_index = 0
-    user_index = 0
-    for item in photo_list:
-        Photo(title=item,
-                   description='test_description',
-                   date_uploaded=date_list[date_index],
-                   privacy_option=1,
-                   owner=user_list[user_index]
-                   )
-        date_index +=1
-        if not date_index % 5:
-            user_index += 1
+        request = self.factory.get('/stream/')
+        request.user = self.usr1
+        response = streamView(request)
+        self.assertEqual(response.status_code, 200)
 
-    import pdb;pdb.set_trace()
-    print "here we are"
-    # db den fotolar gercekten userlara yerlesmis mi bak
-    print self.usr1, "--->>", type(self.usr1)
-    print self.usr1.id
+        response = str(response)
 
-    usr1_photos = Photo.objects.filter(owner__exact=self.usr1.id)
-    print len(usr1_photos)
-    assert len(usr1_photos) == 5
+        for user in friend_following_list:
+            for photo in db_photo_list[user]:
+                assert photo.title  in response
 
 
+        for user in non_ff_list:
+            for photo in db_photo_list[user]:
+                assert str(photo) not in response
 
 
-    # eger hersey yolundaysa:
-    # userlar arasinda iliskileri kurup test caseleri yazabilirsin
-    # super!
 
 
 
