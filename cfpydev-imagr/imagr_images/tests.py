@@ -1,15 +1,10 @@
 from django.test import TestCase
 from imagr_images.models import Photo, Album, ImagrUser, Relationships
-<<<<<<< HEAD
-from imagr_images.views import albumView, photoView
-=======
-from imagr_images.views import streamView
->>>>>>> f3bc87f4b20f6b1c319e36160a82eec2cf40e6e4
+from imagr_images.views import albumView, photoView, streamView
 import datetime
 from django.test.client import RequestFactory
 from django.core.files import File
 from django.core.urlresolvers import reverse
-from django.test.client import Client, RequestFactory
 import os
 
 
@@ -55,6 +50,7 @@ class test_albumView(TestCase):
                                           description='Test album',
                                           privacy_option=2)
         self.album.photos = [self.photo]
+        self.factory = RequestFactory()
 
 
     def test_albumView(self):
@@ -62,9 +58,7 @@ class test_albumView(TestCase):
         request.user = self.usr1
         response = albumView(request, 1)
         self.assertEqual(response.status_code, 200)
-
         content = response.content
-        # import pdb;pdb.set_trace()
         title_test = self.album.photos in content
         self.assertEqual(title_test, True)
 
