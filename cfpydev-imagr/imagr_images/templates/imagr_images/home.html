@@ -1,20 +1,13 @@
 {% extends "base.html" %}
 {% load thumbnail %}
 {% block title %}Home{% endblock %}
-{% if request.user.is_active %}
+<!-- {% if request.user.is_active %}
     {% block navbar_detail %}
 
-        <div class="collapse navbar-collapse">
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="{% url 'home'  %}">Home</a></li>
-                <!-- Disable About/Contact until destinations exist
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li> -->
-              </ul>
-        </div><!--/.nav-collapse -->
+
 
     {% endblock %}
-{% endif %}
+{% endif %} -->
 
 {% block container %}
 <h1>Welcome to your home page {{ ImagrUser.first_name }} {{ ImagrUser.last_name }}!</h1>
