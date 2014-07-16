@@ -44,6 +44,7 @@ def photoView(request, photo_id):
                                                               {'photo': photo}))
 
 def streamView(request):
+
     user_id = request.user.id
     photo_list = get_users_photo_list(user_id)
     return render_to_response('imagr_images/stream.html',

@@ -27,6 +27,7 @@ class base_settings (Configuration):
 
     TEMPLATE_DEBUG = DEBUG
 
+
     ALLOWED_HOSTS = []
 
     AUTH_USER_MODEL = 'imagr_user.ImagrUser'
@@ -56,6 +57,38 @@ class base_settings (Configuration):
     )
 
     ROOT_URLCONF = 'imagr_site.urls'
+
+    ALLOWED_HOSTS = []
+
+    AUTH_USER_MODEL = 'imagr_user.ImagrUser'
+
+    # Application definition
+
+    INSTALLED_APPS = (
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        #'south',
+        'sorl.thumbnail',
+        'imagr_images',
+        'imagr_user',
+    )
+
+    MIDDLEWARE_CLASSES = (
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    )
+
+    ROOT_URLCONF = 'imagr_site.urls'
+
+
 
     WSGI_APPLICATION = 'imagr_site.wsgi.application'
 
@@ -107,8 +140,9 @@ class base_settings (Configuration):
     # THUMBNAIL_FORMAT = 'PNG'
     # THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
     THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.cached_db_kvstore.KVStore'
-    # THUMBNAIL_REDIS_HOST = 'localhost'  # default
-    # THUMBNAIL_REDIS_PORT = 6379  # default
+
+    # THUMBNAIL_REDIS_HOST = 'localhost' # default
+    # THUMBNAIL_REDIS_PORT = 6379 # default
     THUMBNAIL_DEBUG = DEBUG
     THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.pil_engine.Engine'
     THUMBNAIL_CACHE = 'default'
@@ -125,5 +159,3 @@ class base_settings (Configuration):
 
 class Dev(base_settings):
     DEBUG = True
-
-
