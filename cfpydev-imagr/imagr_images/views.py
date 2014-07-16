@@ -23,7 +23,9 @@ def get_users_photo_list(user_id):
     user_list = get_followings_friends(user_id)
     photo_list = []
     for user in user_list:
-      photo_list.append(get_photo_list_by_user(user))
+        item = get_photo_list_by_user(user)
+        for item_ in item:
+            photo_list.append(item_)
     return photo_list
 
 
@@ -44,9 +46,7 @@ def photoView(request, photo_id):
                                                               {'photo': photo}))
 
 def streamView(request):
-
-    user_id = request.user.id
-    photo_list = get_users_photo_list(user_id)
+    photo_list = get_users_photo_list(request.user.id)
     return render_to_response('imagr_images/stream.html',
                             context_instance=RequestContext(request,
                                                             {'photo_list': photo_list}))
