@@ -15,18 +15,9 @@ def get_photo_list(album_id):
     album = Album.objects.filter(id__exact=album_id)[0]
     return album.photos.all()
 
-def get_photo_list_by_user(user_id):
-    photo_list = Photo.objects.filter(owner__exact=user_id)
-    return photo_list
-
 def get_users_photo_list(user_id):
     user_list = get_followings_friends(user_id)
-    photo_list = []
-    for user in user_list:
-        item = get_photo_list_by_user(user)
-        for item_ in item:
-            photo_list.append(item_)
-    return photo_list
+    return Photo.objects.filter(owner__in=user_list).order_by('date_uploaded')
 
 
 def get_photo(photo_id):
@@ -47,6 +38,8 @@ def photoView(request, photo_id):
 
 def streamView(request):
     photo_list = get_users_photo_list(request.user.id)
+    for item in photo_list:
+        print item
     return render_to_response('imagr_images/stream.html',
                             context_instance=RequestContext(request,
                                                             {'photo_list': photo_list}))
