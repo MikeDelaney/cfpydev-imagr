@@ -1,9 +1,11 @@
 from django.test import TestCase
 from imagr_images.models import Photo, Album, ImagrUser, Relationships
-from imagr_images.views import streamView
+from imagr_images.views import albumView, photoView, streamView
 import datetime
 from django.test.client import RequestFactory
 from django.core.files import File
+from django.core.urlresolvers import reverse
+import os
 
 
 class PhotoTests(TestCase):
@@ -29,22 +31,78 @@ class AlbumTests(TestCase):
         self.assertEqual(album1.privacy_option, 1)
 
 
+class test_albumView(TestCase):
+
+    def setUp(self):
+        self.usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe', username='Eyuel')
+        self.usr1.save()
+
+        test_image_path = os.path.dirname(__file__) + '/test_files/ocean.jpg'
+        image = File(open(test_image_path, 'rb'))
+        self.photo = Photo.objects.create(owner=self.usr1,
+                                          image=image,
+                                          title='ocean',
+                                          description='Test pic',
+                                          privacy_option=2)
+
+        self.album = Album.objects.create(owner=self.usr1,
+                                          title="ocean",
+                                          description='Test album',
+                                          privacy_option=2)
+        self.album.photos = [self.photo]
+        self.factory = RequestFactory()
+
+
+    def test_albumView(self):
+        request = self.factory.get(reverse('home'))
+        request.user = self.usr1
+        response = albumView(request, 1)
+        self.assertEqual(response.status_code, 200)
+        content = response.content
+        title_test = self.photo.title in content
+        self.assertEqual(title_test, True)
+
+
 class test_photoView(TestCase):
 
     def setUp(self):
         self.usr1 = ImagrUser(first_name='Eyuel', last_name='Abebe', username='Eyuel')
-        self.usr2 = ImagrUser(first_name='Muazz', last_name='Mira', username='Muazz')
-        self.usr3 = ImagrUser(first_name='Mike', last_name='Delany', username='Mike')
-
         self.usr1.save()
-        self.usr2.save()
-        self.usr3.save()
+
+        test_image_path = os.path.dirname(__file__) + '/test_files/ocean.jpg'
+        image = File(open(test_image_path, 'rb'))
+        self.photo = Photo.objects.create(owner=self.usr1,
+                                          image=image,
+                                          title='ocean',
+                                          description='Test pic',
+                                          privacy_option=2)
+
+        self.album = Album.objects.create(owner=self.usr1,
+                                          title="ocean",
+                                          description='Test album',
+                                          privacy_option=2)
+        self.album.photos = [self.photo]
+
+        self.factory = RequestFactory()
 
     def tearDown(self):
         self.usr1.delete()
-        self.usr2.delete()
-        self.usr3.delete()
+        self.photo.delete()
+        self.album.delete()
 
+    def test_albumView(self):
+        request = self.factory.get(reverse('home'))
+        request.user = self.usr1
+
+        response = photoView(request, self.photo.pk)
+        self.assertEqual(response.status_code, 200)
+        content = response.content
+        # import pdb;pdb.set_trace()
+        title_test = self.photo.title in content
+        description_test = self.photo.description in content
+
+        self.assertEqual(title_test, True)
+        self.assertEqual(description_test, True)
 
 class StreamViewTests(TestCase):
     def setUp(self):
@@ -69,7 +127,8 @@ class StreamViewTests(TestCase):
         date_list = [base - datetime.timedelta(days=x) for x in range(0, 20)]
         date_index = 0
         user_index = 0
-        with open('/Users/muazzezmira/projects/django_imagr/cfpydev-imagr/cfpydev-imagr/imagr_images/static/front_img/7fTNh.jpg', 'rb') as f:
+        base_dir = os.getcwd() + '/imagr_images/static/front_img/'
+        with open(base_dir + '7fTNh.jpg', 'r') as f:
             for item in photo_list:
                 photo_file = File(f)
                 photo = Photo()
@@ -106,9 +165,8 @@ class StreamViewTests(TestCase):
 
 
     def test_stream(self):
-            # db den fotolar gercekten userlara yerlesmis mi bak
         db_photo_list = {}
-        db_photo_list[self.usr1] = list(Photo.objects.filter(owner__exact=self.usr1.id))
+        db_photo_list[self.usr1] = Photo.objects.filter(owner__exact=self.usr1.id)
         db_photo_list[self.usr2] = Photo.objects.filter(owner__exact=self.usr2.id)
         db_photo_list[self.usr3] = Photo.objects.filter(owner__exact=self.usr3.id)
         db_photo_list[self.usr4] = Photo.objects.filter(owner__exact=self.usr4.id)
@@ -134,25 +192,7 @@ class StreamViewTests(TestCase):
             for photo in db_photo_list[user]:
                 assert photo.title  in response
 
-
         for user in non_ff_list:
             for photo in db_photo_list[user]:
-                assert str(photo) not in response
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                assert photo.title not in response
 

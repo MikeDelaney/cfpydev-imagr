@@ -148,4 +148,7 @@ class Home_test(TestCase):
     def test_usr2_response(self):
         request = self.factory.get(reverse('home'))
         request.user = self.usr2
-        self.assertRaises(Http404, home, request)
+        #self.assertRaises(Http404, home, request)
+        response = home(request)
+        self.assertContains(response, "Add some albums")
+

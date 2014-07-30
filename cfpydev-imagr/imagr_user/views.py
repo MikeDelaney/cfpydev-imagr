@@ -7,7 +7,8 @@ from imagr_user.models import ImagrUser
 def home(request):
 
     user_ = get_object_or_404(ImagrUser, pk=request.user.id)
-    album_list = get_list_or_404(Album, owner=request.user.id)
+    #album_list = get_list_or_404(Album, owner=request.user.id)
+    album_list = Album.objects.filter(owner=request.user.id)
     context = RequestContext(request, {'ImagrUser': user_,
                                        'album_list': album_list},)
 
