@@ -41,10 +41,8 @@ coverage.xml
 .mr.developer.cfg
 .project
 .pydevproject
-<<<<<<< HEAD
-=======
 .idea/
->>>>>>> 86abb90ec268ac34eb4fae12dcee1681d2269efe
+.idea
 
 # Rope
 .ropeproject
@@ -55,4 +53,8 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+
+db.sqlite3
+.imagr_images/uploaded_images/
 

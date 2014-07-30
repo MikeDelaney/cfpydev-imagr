@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block title %}Home{% endblock %}
+{% if request.user.is_active %}
+    {% block navbar_detail %}
+
+        <div class="collapse navbar-collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="{% url 'home'  %}">Home</a></li>
+                <!-- Disable About/Contact until destinations exist
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li> -->
+              </ul>
+        </div><!--/.nav-collapse -->
+
+    {% endblock %}
+{% endif %}
+
+{% block container %}
+<h1>Welcome to your home page {{ ImagrUser.first_name }} {{ ImagrUser.last_name }}!</h1>
+
+<div class="h1">{{ user.first_name }}</div>
+
+<div class="row">
+    {% for album in album_list %}
+      <div class="col-lg-4 col-sm-6 col-md-4">
+        <div class="thumbnail">
+            <a href="{% url 'albums' album.id %}">
+                {% thumbnail album.cover_photo.get.image "242x200" crop="center" as im %}
+                    <img class="thumbnail img-responsive" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+            </a>
+
+            <div class="caption">
+              <h3>{{ album.title }}</h3>
+              <p> {{ album.description }}</p>
+            </div>
+        </div>
+      </div>
+    {% empty %}
+    <h1>Add some albums :)</h1>
+    {% endfor %}
+</div>
+{% endblock %}

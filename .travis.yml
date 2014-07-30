@@ -1,0 +1,15 @@
+language: python
+python:
+  - "2.7"
+# command to install dependencies
+addons:
+  postgresql: "9.3"
+install: "pip install -r requirements.txt"
+# command to run tests
+before_script:
+  - psql -c 'create database imagr;' -U postgres
+script: python setup.py develop && nosetests -w tests/
+script: python cfpydev-imagr/manage.py test imagr_images
+branches:
+    only:
+      - models

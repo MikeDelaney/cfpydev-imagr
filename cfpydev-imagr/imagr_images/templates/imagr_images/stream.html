@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block title %}Stream{% endblock %}
+
+{% if request.user.is_active %}
+    {% block navbar_detail %}
+
+        <div class="collapse navbar-collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="{% url 'home'  %}">Home</a></li>
+              </ul>
+        </div>
+
+    {% endblock %}
+{% endif %}
+
+{% block container %}
+
+<div class="row">
+
+{% for photo in photo_list %}
+    <ul class="media-list">
+      <li class="media">
+            {% thumbnail photo.image "128x128" crop="center" as im %}
+                <img class="media-object" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+            {% endthumbnail %}
+        <div class="media-body">
+            <h4 class="media-heading">{{ photo.title }}</h4>
+            <p>{{ photo.description }} </p>
+        </div>
+      </li>
+    </ul>
+{% endfor %}
+{% endblock %}
+
+
+

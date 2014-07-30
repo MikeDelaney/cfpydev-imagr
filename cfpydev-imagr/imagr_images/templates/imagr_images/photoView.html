@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+<!--{% load thumbnail %}-->
+{% block title %}Imagr{% endblock %}
+
+
+{% if request.user.is_active %}
+    {% block navbar_detail %}
+
+        <div class="collapse navbar-collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="{% url 'home'  %}">Home</a></li>
+                <!-- Disable About/Contact until destinations exist
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li> -->
+              </ul>
+        </div><!--/.nav-collapse -->
+
+    {% endblock %}
+{% endif %}
+
+{% block container %}
+
+<div class="row">
+
+
+      <img class="media-object" src="{{ photo.image.url }}" width="{{ photo.width }}" height="{{ photo.height }}">
+
+    <div class="media-body">
+          <h4 class="media-heading">{{ photo.title }}</h4>
+          <p>{{ photo.description }}
+     </div>
+</div>
+
+{% endblock %}
