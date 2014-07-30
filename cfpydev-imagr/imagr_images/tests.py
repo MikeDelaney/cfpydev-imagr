@@ -59,7 +59,7 @@ class test_albumView(TestCase):
         response = albumView(request, 1)
         self.assertEqual(response.status_code, 200)
         content = response.content
-        title_test = self.album.photos in content
+        title_test = self.photo.title in content
         self.assertEqual(title_test, True)
 
 
@@ -194,5 +194,5 @@ class StreamViewTests(TestCase):
 
         for user in non_ff_list:
             for photo in db_photo_list[user]:
-                assert str(photo) not in response
+                assert photo.title not in response
 
