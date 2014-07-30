@@ -127,7 +127,8 @@ class StreamViewTests(TestCase):
         date_list = [base - datetime.timedelta(days=x) for x in range(0, 20)]
         date_index = 0
         user_index = 0
-        with open('/Users/muazzezmira/projects/django_imagr/cfpydev-imagr/cfpydev-imagr/imagr_images/static/front_img/7fTNh.jpg', 'rb') as f:
+        base_dir = os.getcwd() + '/imagr_images/static/front_img/'
+        with open(base_dir + '7fTNh.jpg', 'r') as f:
             for item in photo_list:
                 photo_file = File(f)
                 photo = Photo()
