@@ -22,7 +22,6 @@
 <div class="h1">{{ user.first_name }}</div>
 
 <div class="row">
-    {% if album_list %}
     {% for album in album_list %}
       <div class="col-lg-4 col-sm-6 col-md-4">
         <div class="thumbnail">
@@ -38,9 +37,8 @@
             </div>
         </div>
       </div>
-    {% endfor %}
-    {% else %}
+    {% empty %}
     <h1>Add some albums :)</h1>
-    {% endif %}
+    {% endfor %}
 </div>
 {% endblock %}
