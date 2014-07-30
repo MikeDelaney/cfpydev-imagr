@@ -93,9 +93,9 @@ class test_photoView(TestCase):
     def test_albumView(self):
         request = self.factory.get(reverse('home'))
         request.user = self.usr1
-        response = photoView(request, 1)
-        self.assertEqual(response.status_code, 200)
 
+        response = photoView(request, self.photo.pk)
+        self.assertEqual(response.status_code, 200)
         content = response.content
         # import pdb;pdb.set_trace()
         title_test = self.photo.title in content
@@ -103,7 +103,6 @@ class test_photoView(TestCase):
 
         self.assertEqual(title_test, True)
         self.assertEqual(description_test, True)
-
 
 class StreamViewTests(TestCase):
     def setUp(self):
