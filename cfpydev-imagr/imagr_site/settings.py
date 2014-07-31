@@ -41,7 +41,7 @@ class Base(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
-        'south',
+        # 'south',
         'sorl.thumbnail',
         'imagr_images',
         'imagr_user',
