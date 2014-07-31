@@ -1,5 +1,5 @@
 from django import forms
-from imagr_users.models import ImagrUser
+from imagr_user.models import ImagrUser
 from registration.forms import RegistrationForm
 
 
