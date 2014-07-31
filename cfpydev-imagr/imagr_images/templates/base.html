@@ -47,7 +47,9 @@
         {%  block navbar_detail %}
           <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
+                  {% block homelink %}
                   <li class="active"><a href="{% url 'home'  %}">Home</a></li>
+                  {% endblock %}
                   <!-- Disable About/Contact until destinations exist
                   <li><a href="#about">About</a></li>
                   <li><a href="#contact">Contact</a></li> -->
