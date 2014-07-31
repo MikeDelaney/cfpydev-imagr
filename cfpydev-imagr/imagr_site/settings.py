@@ -46,6 +46,7 @@ class Base(Configuration):
         'imagr_images',
         'imagr_user',
         'gunicorn',
+        'registration',
     )
 
     MIDDLEWARE_CLASSES = (
