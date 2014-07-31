@@ -80,6 +80,8 @@ class Base(Configuration):
         }
     }
 
+    ACCOUNT_ACTIVATION_DAYS = 7
+
 # first run prev confs then call class Dev
 
 
