@@ -1,13 +1,6 @@
 {% extends "base.html" %}
 {% load thumbnail %}
 {% block title %}Home{% endblock %}
-<!-- {% if request.user.is_active %}
-    {% block navbar_detail %}
-
-
-
-    {% endblock %}
-{% endif %} -->
 
 {% block container %}
 <h1>Welcome to your home page {{ ImagrUser.first_name }} {{ ImagrUser.last_name }}!</h1>
