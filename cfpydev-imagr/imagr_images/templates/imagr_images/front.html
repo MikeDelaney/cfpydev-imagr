@@ -5,7 +5,7 @@
 {% block custom_css %}<link href="/static/imagr_images/jumbotron.css" rel="stylesheet">{% endblock %}
 
 {%  block navbar_detail %}
-<div class="navbar-collapse collapse">
+<!-- <div class="navbar-collapse collapse">
   <form class="navbar-form navbar-right" role="form">
     <div class="form-group">
       <input type="text" placeholder="Username" class="form-control">
@@ -15,7 +15,7 @@
     </div>
     <button type="submit" class="btn btn-success">Sign in</button>
   </form>
-</div><!--/.navbar-collapse -->
+</div> --><!--/.navbar-collapse -->
 {% endblock %}
 
 {% block jumbo %}
@@ -24,7 +24,10 @@
   <div class="container">
     <h1>Welcome to Imagr!</h1>
     <p>Here you can share pictures with your friends. You can also follow people who take better photos than you do.</p>
-    <p><a href="/accounts/register/"class="btn btn-primary btn-lg" role="button">Sign up here &raquo;</a></p>
+    <p>
+      <a href="/accounts/register/"class="btn btn-primary btn-lg" role="button">Register &raquo;</a>
+      <a href="/accounts/login/"class="btn btn-success btn-lg" role="button">Login &raquo;</a>
+    </p>
   </div>
 </div>
 {% endblock %}
