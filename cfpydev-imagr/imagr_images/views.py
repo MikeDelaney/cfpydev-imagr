@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from imagr_images.models import Album, Photo, ImagrUser, Relationships
-
+from django.contrib.auth.decorators import login_required
 
 def get_followings_friends (user_id):
     user = ImagrUser.objects.get(pk=user_id)
@@ -24,18 +24,23 @@ def get_photo(photo_id):
     return Photo.objects.filter(id__exact=photo_id)[0]
 
 
+@login_required(login_url='/accounts/login/')
 def albumView(request, album_id):
     photo_list = get_photo_list(album_id)
     return render_to_response('imagr_images/albumView.html',
                               context_instance=RequestContext(request,
                                                               {'photo_list': photo_list}))
 
+
+@login_required(login_url='/accounts/login/')
 def photoView(request, photo_id):
     photo = get_photo(photo_id)
     return render_to_response('imagr_images/photoView.html',
                               context_instance=RequestContext(request,
                                                               {'photo': photo}))
 
+
+@login_required(login_url='/accounts/login/')
 def streamView(request):
     photo_list = get_users_photo_list(request.user.id)
     for item in photo_list:
