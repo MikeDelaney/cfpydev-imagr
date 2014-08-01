@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^home$', include('imagr_user.urls')),
     url(r'^album/', include('imagr_images.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    (r'^accounts/logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}),
     url(r'^accounts/', include('imagr_user.urls')),
     url(r'^stream$', imageViews.streamView, name='stream'),
 )
