@@ -3,4 +3,4 @@
 cfpydev-imagr
 =============
 
-Social image sharing application, written at Code Fellows as a class project in Django.
+Social image sharing application with friend/follow features. Written at Code Fellows as a class project in Django.
