@@ -1,9 +1,6 @@
-## cfpydev-imagr
-   =============
+[![Build Status](https://travis-ci.org/MikeDelaney/cfpydev-imagr.svg?branch=master)](https://travis-ci.org/MikeDelaney/cfpydev-imagr)
 
-An image sharing application, written at Codefellows Seattle as a class project in Django
+cfpydev-imagr
+=============
 
-+ We test the Polls model
-+ We test the Admins model
-
-[![Build Status](https://travis-ci.org/eyueld-codefellow/cfpydev-imagr.svg?branch=models)](https://travis-ci.org/eyueld-codefellow/cfpydev-imagr)
+Social image sharing application, written at Code Fellows as a class project in Django.
