@@ -90,6 +90,7 @@ class Dev(Base):
     DEBUG = True
     TEMPLATE_DEBUG = DEBUG
     THUMBNAIL_DEBUG = DEBUG
+    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -105,6 +106,14 @@ class Prod(Base):
     DEBUG = False
     TEMPLATE_DEBUG = DEBUG
     THUMBNAIL_DEBUG = DEBUG
+    # Email settings for registration, should work with Mandrill as well
+    # A real account will need to be set up for this to work
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = 'someemail@gmail.com'
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PWD', 'default')
+    EMAIL_PORT = 587
+    # End email settings
     SECRET_KEY = os.environ.get('SECRET_KEY')
     DATABASES = {
         'default': {
