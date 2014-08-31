@@ -16,3 +16,11 @@ class ImagrUserRegistrationForm(RegistrationForm):
             )
         else:
             return self.cleaned_data['username']
+
+    def save(self, commit=True):
+        # Save password in hashed format
+        user = super(ImagrUserRegistrationForm, self).save(commit=False)
+        user.set_password(self.cleaned_data['password'])
+        if commit:
+            user.save()
+        return user
