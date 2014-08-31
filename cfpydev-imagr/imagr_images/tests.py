@@ -56,7 +56,7 @@ class test_albumView(TestCase):
     def test_albumView(self):
         request = self.factory.get(reverse('home'))
         request.user = self.usr1
-        response = albumView(request, 1)
+        response = albumView(request, self.album.pk)
         self.assertEqual(response.status_code, 200)
         content = response.content
         title_test = self.photo.title in content

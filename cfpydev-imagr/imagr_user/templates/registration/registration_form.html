@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+<!-- {% load i18n %} -->
+{% block homelink %}
+<li class="active"><a href="/">Home</a></li>
+{% endblock %}
+{% block container %}
+<form method="post" action=".">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <input class="btn btn-primary" type="submit" value="{% trans 'Submit' %}" />
+</form>
+{% endblock %}
