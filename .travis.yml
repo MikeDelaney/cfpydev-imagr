@@ -10,6 +10,3 @@ before_script:
   - psql -c 'create database imagr;' -U postgres
 script: python setup.py develop && nosetests -w tests/
 script: python cfpydev-imagr/manage.py test imagr_images
-branches:
-    only:
-      - models
